@@ -29,8 +29,8 @@ driver.set_page_load_timeout(30)
 
 # data = pd.read_csv("Equity.csv")
 # data = data['Security Id'] 
-shortcode = "ARUNAHTEL"
-name = "ARUNA HOTELS LTD"
+shortcode = "HDFC"
+name = "HOUSING DEVELOPMENT FINANCE CORP.LTD"
 try:
     driver.get("https://www.moneycontrol.com/india/stockpricequote/" + name[0])
     print("success : Loaded...")
@@ -57,11 +57,11 @@ try:
         tempname = " ".join(nameL) 
         print(tempname)
         try:
-            link = driver.find_element_by_partial_link_text(name)
+            link = driver.find_element_by_partial_link_text(tempname)
             links.append(link)
         except Exception as e:
             print("error : cant find the link on " + tempname)
-
+    print(links)
     if(len(links) <= 0 ):
         link = driver.find_element_by_partial_link_text(shortcode)
         links.append(link)    

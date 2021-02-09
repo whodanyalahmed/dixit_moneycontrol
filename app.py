@@ -13,6 +13,8 @@ def resource_path(relative_path):
         base_path = os.path.dirname(__file__)
     return os.path.join(base_path, relative_path)
 
+
+
 if platform == "linux" or platform == "linux2":
     # linux
     path = resource_path('driver/chromedriver')
@@ -22,6 +24,8 @@ else:
 print("\n\nProcessing.....")
 
 driver =webdriver.Chrome(path)
+def getYear():
+    return driver.find_element_by_xpath("//div[@id='standalone-new']/div[@class='financial-table']/table[@class='mctable1']/tbody/tr[0]/td[0]")
 driver.maximize_window()
 # open link
 # driver.set_page_load_timeout(120)
@@ -46,7 +50,7 @@ links = []
 try:
 
     for e in reversed(nameList):
-        print("in namelist for loop")
+        # print("in namelist for loop")
         # link = driver.find_element_by_xpath(f"//*[contains(text(), '" + name.replace(e," ")  +"')]").click()
         tempname = name.replace(e,"")
         tempname = tempname.strip().split(" ")
@@ -55,7 +59,7 @@ try:
             n = c.capitalize()
             nameL.append(n)
         tempname = " ".join(nameL) 
-        print(tempname)
+        # print(tempname)
         try:
             link = driver.find_element_by_partial_link_text(tempname)
             links.append(link)
@@ -70,7 +74,46 @@ try:
         links[0].click()
     except Exception as e:
         print("error : cant find the name " + str(e))    
-    sector = driver.find_element_by_xpath('//div[@id="stockName"]/span/strong')
+    # time.sleep(4)
+    try:
+        sector = driver.find_element_by_xpath('//div[@id="stockName"]/span/strong').text
+        print(sector)
+    except Exception as e:
+        print("error : cant find sector ")
+    try:
+        driver.find_element_by_xpath("//a[@title='Balance Sheet']").click()
+    except Exception as e:
+        print("error : cant find balance sheet ")
+    time.sleep(10)
+    print("waiting")
+    # driver.close()
+    print("changing tab")
+    driver.switch_to.window(driver.window_handles[0])
+    driver.close()
+    driver.switch_to.window(driver.window_handles[0])
+    driver.set_script_timeout(40)
+    driver.execute_script("window.scrollTo(0, 700)") 
+    try:
+        standAloneYear = getYear()
+        standAloneYear_url = driver.current_url
+        print(standAloneYear.text)
+
+    except Exception as e:
+        print("error : cant find standalone years "+str(e))
+    
+    try:
+        driver.find_element_by_css_selector("a#consolidated")
+    except Exception as e:
+        print("error : cant find consoledated link "+str(e))
+    
+    # try:
+    #     Consoledated = getYear()
+    #     Consoledated_url = driver.current_url
+    #     print(Consoledated.text)
+
+    # except Exception as e:
+    #     print("error : cant find standalone years "+str(e))
+
     # search.send_keys(Keys.CONTROL + "a")
     # search.send_keys(Keys.DELETE)
 except Exception as e:

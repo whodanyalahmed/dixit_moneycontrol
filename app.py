@@ -28,7 +28,7 @@ LOGGER.setLevel(logging.WARNING)
 driver =webdriver.Chrome(path)
 def getYear():
     driver.execute_script("window.scrollTo(0, 700)") 
-    return driver.find_element_by_xpath("//div[@id='standalone-new']/div[@class='financial-table']/table[@class='mctable1']/tbody/tr[0]/td[0]")
+    return driver.find_element_by_xpath("//div[@id='standalone-new']/div[1]/table/tbody/tr[1]/td[2]")
 driver.maximize_window()
 # open link
 # driver.set_page_load_timeout(120)
@@ -68,7 +68,7 @@ try:
             links.append(link)
         except Exception as e:
             print("error : cant find the link on " + tempname)
-    print(links)
+    # print(links)
     if(len(links) <= 0 ):
         link = driver.find_element_by_partial_link_text(shortcode)
         links.append(link)    
@@ -92,31 +92,36 @@ try:
     print("changing tab")
     driver.switch_to.window(driver.window_handles[0])
     driver.close()
-    driver.switch_to.window(driver.window_handles[1])
+    driver.switch_to.window(driver.window_handles[0])
     driver.set_script_timeout(40)
     try:
-        standAloneYear = getYear()
+        standAlone = getYear()
         standAloneYear_url = driver.current_url
-        print(standAloneYear.text)
+        standAloneYear = standAlone.text.split(" ")[1]
+        print(standAloneYear)
 
     except Exception as e:
         print("error : cant find standalone years "+str(e))
     
-    # try:
-    #     driver.find_element_by_id("#consolidated").click()
-    # except Exception as e:
-    #     print("error : cant find consoledated link "+str(e))
+    try:
+        driver.find_element_by_id("#consolidated").click()
+    except Exception as e:
+        print("error : cant find consoledated link "+str(e))
     
-    # try:
-    #     Consoledated = getYear()
-    #     Consoledated_url = driver.current_url
-    #     print(Consoledated.text)
+    print("waiting")
+    time.sleep(5)
+    
+    try:
+        Consoledated = getYear()
+        Consoledated_url = driver.current_url
+        ConsoledatedYear = Consoledated.text.split(" ")[1]
+        print(ConsoledatedYear)
 
-    # except Exception as e:
-    #     print("error : cant find standalone years "+str(e))
+    except Exception as e:
+        print("error : cant find standalone years "+str(e))
 
-    # search.send_keys(Keys.CONTROL + "a")
-    # search.send_keys(Keys.DELETE)
+    
+
 except Exception as e:
     print("Something went wrong" + str(e))
 

@@ -1,6 +1,5 @@
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.keys import Keys
 import time,sys,os
 # import pandas as pd
 from sys import platform

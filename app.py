@@ -1,10 +1,9 @@
+from os.path import expanduser
 from selenium import webdriver
 import selenium
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
 import time,sys,os
-import logging
-from selenium.webdriver.remote.remote_connection import LOGGER
 import pandas as pd
 from sys import platform
 cur_path = sys.path[0]
@@ -24,11 +23,15 @@ else:
     path = resource_path('driver/chromedriver.exe')
     # Windows...
 print("\n\nProcessing.....")
-LOGGER.setLevel(logging.WARNING)
 driver =webdriver.Chrome(path)
 def getYear():
     driver.execute_script("window.scrollTo(0, 700)") 
     return driver.find_element_by_xpath("//div[@id='standalone-new']/div[1]/table/tbody/tr[1]/td[2]")
+def getNextPageUrl():
+    url = driver.find_element_by_css_selector('span.nextpaging')
+    url  = url.find_element_by_xpath('..').get_attribute('href')
+    return url
+        
 driver.maximize_window()
 # open link
 # driver.set_page_load_timeout(120)
@@ -70,7 +73,7 @@ try:
             link = driver.find_element_by_partial_link_text(tempname)
             links.append(link)
         except Exception as e:
-            print("error : cant find the link on " + tempname)
+            # print("error : cant find the link on " + tempname)
     # print(links)
     if(len(links) <= 0 ):
         link = driver.find_element_by_partial_link_text(shortcode)
@@ -103,20 +106,22 @@ try:
     try:
         standAlone = getYear()
         standAloneYear_url = driver.current_url
+        standAloneL.append(standAloneYear_url)
         di['standalone'] = standAlone.text.split(" ")[1]
-        print(di['standalone'])
-        time.sleep(2)
-        standAlone_url2 = driver.find_element_by_xpath("//ul[@class='pagination']/li[2]/a")
-        standAlone_url2 = standAlone_url2.get_attribute('href')
-        # standAloneL.append(standAloneYear_url)
-        # standAloneL.append(standAlone_url2)
-        print(standAloneYear_url)
-        print(standAlone_url2)
-        
-
+        print(di['standalone'] + " and waiting")
+        time.sleep(10)
+        # standAlone_url2 = driver.find_element_by_xpath("//ul[@class='pagination']")
+        try:
+            standAloneYear_url2 = getNextPageUrl()
+            standAloneL.append(standAloneYear_url2)
+        except Exception as e:
+            print("error : cant find next page or " + str(e))
+            standAloneL.append(None)
 
     except Exception as e:
         print("error : cant find standalone years "+str(e))
+        standAloneL.append(None)
+        standAloneL.append(None)
     
     try:
         driver.find_element_by_id("#consolidated").click()
@@ -129,22 +134,22 @@ try:
     try:
         Consoledated = getYear()
         Consoledated_url = driver.current_url
+        ConsoledatedL.append(Consoledated_url)
         di['consoledated']  = Consoledated.text.split(" ")[1]
-        print(di['consoledated'])
-        time.sleep(2)
-        consoledated_url2 = driver.find_element_by_xpath("//ul[@class='pagination']/li[2]/a")
-        consoledated_url2 = consoledated_url2.get_attribute('href')
-        # ConsoledatedL.append(Consoledated_url)
-        # ConsoledatedL.append(consoledated_url2)
-        print(Consoledated_url)
-        print(consoledated_url2)
+        print(di['consoledated'] + " and waiting")
+        time.sleep(10)
+        # consoledated_url2 = driver.find_element_by_xpath("//ul[@class='pagination']/")
+        try:
+            consoledated_url2 = getNextPageUrl()
+            ConsoledatedL.append(consoledated_url2)
+        except Exception as e:
+            print("error : cant find next page or " + str(e))
+            ConsoledatedL.append(None)
 
     except Exception as e:
         print("error : cant find consoledated years "+str(e))
-    print(di['consoledated'])
-    print(di['standalone'])
-    print(ConsoledatedL)
-    print(standAloneL)
+        ConsoledatedL.append(None)
+        ConsoledatedL.append(None)
     if(di['consoledated'] < di['standalone']):
         print("standalone")
         for d in standAloneL:

@@ -72,8 +72,6 @@ try:
         try:
             link = driver.find_element_by_partial_link_text(tempname)
             links.append(link)
-        except Exception as e:
-            # print("error : cant find the link on " + tempname)
     # print(links)
     if(len(links) <= 0 ):
         link = driver.find_element_by_partial_link_text(shortcode)

@@ -27,6 +27,7 @@ print("\n\nProcessing.....")
 LOGGER.setLevel(logging.WARNING)
 driver =webdriver.Chrome(path)
 def getYear():
+    driver.execute_script("window.scrollTo(0, 700)") 
     return driver.find_element_by_xpath("//div[@id='standalone-new']/div[@class='financial-table']/table[@class='mctable1']/tbody/tr[0]/td[0]")
 driver.maximize_window()
 # open link
@@ -93,7 +94,6 @@ try:
     driver.close()
     driver.switch_to.window(driver.window_handles[1])
     driver.set_script_timeout(40)
-    driver.execute_script("window.scrollTo(0, 700)") 
     try:
         standAloneYear = getYear()
         standAloneYear_url = driver.current_url

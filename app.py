@@ -49,7 +49,10 @@ except TimeoutException as e:
 # for d in data:    
 nameList = name.split(" ")
 links = []
-
+PagesLink = []
+standAloneL = []
+ConsoledatedL = []
+di = {}
 try:
 
     for e in reversed(nameList):
@@ -83,22 +86,34 @@ try:
         print(sector)
     except Exception as e:
         print("error : cant find sector ")
+    PagesLink.append(driver.current_url)
     try:
         driver.find_element_by_xpath("//a[@title='Balance Sheet']").click()
     except Exception as e:
         print("error : cant find balance sheet ")
     print("waiting")
-    time.sleep(5)
+    time.sleep(10)
     print("changing tab")
     driver.switch_to.window(driver.window_handles[0])
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
-    driver.set_script_timeout(40)
+    # driver.set_script_timeout(60)
+    driver.set_page_load_timeout(50)
+
     try:
         standAlone = getYear()
         standAloneYear_url = driver.current_url
-        standAloneYear = standAlone.text.split(" ")[1]
-        print(standAloneYear)
+        di['standalone'] = standAlone.text.split(" ")[1]
+        print(di['standalone'])
+        time.sleep(2)
+        standAlone_url2 = driver.find_element_by_xpath("//ul[@class='pagination']/li[2]/a")
+        standAlone_url2 = standAlone_url2.get_attribute('href')
+        # standAloneL.append(standAloneYear_url)
+        # standAloneL.append(standAlone_url2)
+        print(standAloneYear_url)
+        print(standAlone_url2)
+        
+
 
     except Exception as e:
         print("error : cant find standalone years "+str(e))
@@ -114,16 +129,33 @@ try:
     try:
         Consoledated = getYear()
         Consoledated_url = driver.current_url
-        ConsoledatedYear = Consoledated.text.split(" ")[1]
-        print(ConsoledatedYear)
+        di['consoledated']  = Consoledated.text.split(" ")[1]
+        print(di['consoledated'])
+        time.sleep(2)
+        consoledated_url2 = driver.find_element_by_xpath("//ul[@class='pagination']/li[2]/a")
+        consoledated_url2 = consoledated_url2.get_attribute('href')
+        # ConsoledatedL.append(Consoledated_url)
+        # ConsoledatedL.append(consoledated_url2)
+        print(Consoledated_url)
+        print(consoledated_url2)
 
     except Exception as e:
-        print("error : cant find standalone years "+str(e))
-
-    
+        print("error : cant find consoledated years "+str(e))
+    print(di['consoledated'])
+    print(di['standalone'])
+    print(ConsoledatedL)
+    print(standAloneL)
+    if(di['consoledated'] < di['standalone']):
+        print("standalone")
+        for d in standAloneL:
+            PagesLink.append(d)
+    else:
+        print("consoledated")
+        for d in ConsoledatedL:
+            PagesLink.append(d)
 
 except Exception as e:
     print("Something went wrong" + str(e))
 
-
+print(PagesLink)
 print("success : complete")

@@ -1,10 +1,8 @@
-from os.path import expanduser
 from selenium import webdriver
-import selenium
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
 import time,sys,os
-import pandas as pd
+# import pandas as pd
 from sys import platform
 cur_path = sys.path[0]
 def resource_path(relative_path):

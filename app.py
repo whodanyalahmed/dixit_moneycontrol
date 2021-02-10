@@ -3,6 +3,8 @@ import selenium
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
 import time,sys,os
+import logging
+from selenium.webdriver.remote.remote_connection import LOGGER
 import pandas as pd
 from sys import platform
 cur_path = sys.path[0]
@@ -22,7 +24,7 @@ else:
     path = resource_path('driver/chromedriver.exe')
     # Windows...
 print("\n\nProcessing.....")
-
+LOGGER.setLevel(logging.WARNING)
 driver =webdriver.Chrome(path)
 def getYear():
     return driver.find_element_by_xpath("//div[@id='standalone-new']/div[@class='financial-table']/table[@class='mctable1']/tbody/tr[0]/td[0]")
@@ -84,13 +86,13 @@ try:
         driver.find_element_by_xpath("//a[@title='Balance Sheet']").click()
     except Exception as e:
         print("error : cant find balance sheet ")
-    time.sleep(10)
     print("waiting")
+    time.sleep(5)
     # driver.close()
-    print("changing tab")
-    driver.switch_to.window(driver.window_handles[0])
-    driver.close()
-    driver.switch_to.window(driver.window_handles[0])
+    # print("changing tab")
+    # driver.switch_to.window(driver.window_handles[0])
+    # driver.close()
+    driver.switch_to.window(driver.window_handles[1])
     driver.set_script_timeout(40)
     driver.execute_script("window.scrollTo(0, 700)") 
     try:
@@ -101,10 +103,10 @@ try:
     except Exception as e:
         print("error : cant find standalone years "+str(e))
     
-    try:
-        driver.find_element_by_css_selector("a#consolidated")
-    except Exception as e:
-        print("error : cant find consoledated link "+str(e))
+    # try:
+    #     driver.find_element_by_id("#consolidated").click()
+    # except Exception as e:
+    #     print("error : cant find consoledated link "+str(e))
     
     # try:
     #     Consoledated = getYear()

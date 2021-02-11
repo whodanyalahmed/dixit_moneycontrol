@@ -2,18 +2,19 @@ from bs4 import BeautifulSoup
 import requests
 
 
-url= "https://www.screener.in/screens/265380/Good-Solvent-Growth-companies"
 
 def MakeSoup(object):
     soup = BeautifulSoup(object,'lxml')
     return soup
 
-# print(type(html))
+print("Processing....")
 
 
 # tb = soup.find_all('table')
 companies = []
 
+url= "https://www.screener.in/screens/265380/Good-Solvent-Growth-companies"
+# url= "https://www.screener.in/screens/282622/Solvency-Screen/"
 c = 0
 
 def FillNames(url):
@@ -27,7 +28,7 @@ def FillNames(url):
         else:
             companies.append(company_name)
     global c
-    print(c)
+    # print(c)
     if(c == 0):
 
         op = soup.find('div',{'class': 'options'})
@@ -48,13 +49,16 @@ def FillNames(url):
         
     else:
         op = soup.find_all('div',{'class': 'options'})
-        print(op)
+        # print(op)
 
         try:
             if(len(op) == 3):
                 a = op[1].find_all('a')
                 NextPage = a[0]['href']
-                print(NextPage)
+                # print(NextPage)
+                url = url.split("?")
+                url = url[0]
+                url = url[:-1]
                 GoNextPage(NextPage,url)
             else:
                 print("ending loop ")
@@ -66,10 +70,11 @@ def GoNextPage(page,*url):
     if(page == 0):
         print("no more values found")
     else:
+        # print(url[0] + "/" + page)
         FillNames(url[0] + "/" + page)
 
 
 
 FillNames(url)
 for e in range(len(companies)):
-    print(str(e) + " - "  + companies[e])
+    print(str(e+1) + " - "  + companies[e])

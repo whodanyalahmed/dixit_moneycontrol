@@ -175,10 +175,24 @@ try:
             print(PL_url2)
             PagesLink.append(PL_url2)
         except Exception as e:
-            print("error : cant find next page or " + str(e))
+            print("error : cant find next PL page or " + str(e))
             PagesLink.append(None)
     except Exception as e:
         print("Cant find profit loss or " + str(e))
+    try:
+        Qr = driver.find_element_by_xpath("//a[@title='Quarterly Results' and @class='QuarterlyResults']")
+        Qrurl = Qr.get_attribute('href')
+        driver.get(Qrurl)
+        PagesLink.append(Qrurl)
+        try:
+            Qr_url2 = getNextPageUrl()
+            print(Qr_url2)
+            PagesLink.append(Qr_url2)
+        except Exception as e:
+            print("error : cant find next QR page or " + str(e))
+            PagesLink.append(None)
+    except Exception as e:
+        print("Cant find Qurarterly report or " + str(e))
 
 except Exception as e:
     print("Something went wrong" + str(e))

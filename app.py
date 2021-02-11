@@ -178,7 +178,7 @@ try:
             print("error : cant find next page or " + str(e))
             PagesLink.append(None)
     except Exception as e:
-        print("Cant find profit loss or " + str(e) )
+        print("Cant find profit loss or " + str(e))
 
 except Exception as e:
     print("Something went wrong" + str(e))

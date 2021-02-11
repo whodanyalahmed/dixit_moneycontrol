@@ -1,4 +1,5 @@
 from selenium import webdriver
+from screen import GatherData
 from selenium.common.exceptions import TimeoutException
 import time,sys,os
 # import pandas as pd
@@ -19,7 +20,7 @@ if platform == "linux" or platform == "linux2":
 else:
     path = resource_path('driver/chromedriver.exe')
     # Windows...
-print("\n\nProcessing.....")
+# print("\n\nProcessing.....")
 driver =webdriver.Chrome(path)
 def getYear():
     driver.execute_script("window.scrollTo(0, 700)") 
@@ -37,7 +38,9 @@ driver.set_page_load_timeout(30)
 # data = pd.read_csv("Equity.csv")
 # data = data['Security Id'] 
 shortcode = "HDFC"
-name = "HOUSING DEVELOPMENT FINANCE CORP.LTD"
+name = GatherData()
+name = name[0]
+print(name)
 try:
     driver.get("https://www.moneycontrol.com/india/stockpricequote/" + name[0])
     print("success : Loaded...")
@@ -54,32 +57,36 @@ standAloneL = []
 ConsoledatedL = []
 di = {}
 try:
-
-    for e in reversed(nameList):
-        # print("in namelist for loop")
-        # link = driver.find_element_by_xpath(f"//*[contains(text(), '" + name.replace(e," ")  +"')]").click()
-        tempname = name.replace(e,"")
-        tempname = tempname.strip().split(" ")
-        nameL = []
-        for c in tempname:
-            n = c.capitalize()
-            nameL.append(n)
-        tempname = " ".join(nameL) 
-        # print(tempname)
-        try:
-            link = driver.find_element_by_partial_link_text(tempname)
-            links.append(link)
-        # print(links)
-        except Exception as e:
-            print(e)
-        if(len(links) <= 0 ):
-            link = driver.find_element_by_partial_link_text(shortcode)
-            links.append(link)    
-# driver.find_element_by_partial_link_text(name).click()
     try:
-        links[0].click()
+        normalName = driver.find_elements_by_partial_link_text(name)
+        print(len(normalName))
+        normalName[0].click()
     except Exception as e:
-        print("error : cant find the name " + str(e))    
+        for e in reversed(nameList):
+            # print("in namelist for loop")
+            # link = driver.find_element_by_xpath(f"//*[contains(text(), '" + name.replace(e," ")  +"')]").click()
+            tempname = name.replace(e,"")
+            tempname = tempname.strip().split(" ")
+            nameL = []
+            for c in tempname:
+                n = c.capitalize()
+                nameL.append(n)
+            tempname = " ".join(nameL) 
+            # print(tempname)
+            try:
+                link = driver.find_element_by_partial_link_text(tempname)
+                links.append(link)
+            # print(links)
+            except Exception as e:
+                print(e)
+            if(len(links) <= 0 ):
+                link = driver.find_element_by_partial_link_text(shortcode)
+                links.append(link)    
+    # driver.find_element_by_partial_link_text(name).click()
+        try:
+            links[0].click()
+        except Exception as e:
+            print("error : cant find the name " + str(e))    
     # time.sleep(4)
     try:
         sector = driver.find_element_by_xpath('//div[@id="stockName"]/span/strong').text
@@ -88,15 +95,18 @@ try:
         print("error : cant find sector ")
     PagesLink.append(driver.current_url)
     try:
-        driver.find_element_by_xpath("//a[@title='Balance Sheet']").click()
+        driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
+        time.sleep(5)
+        BS = driver.find_element_by_xpath("//a[@title='Balance Sheet']")
+        driver.get(BS.get_attribute('href'))
     except Exception as e:
         print("error : cant find balance sheet ")
-    print("waiting")
-    time.sleep(10)
-    print("changing tab")
-    driver.switch_to.window(driver.window_handles[0])
-    driver.close()
-    driver.switch_to.window(driver.window_handles[0])
+    # print("waiting")
+    # time.sleep(10)
+    # print("changing tab")
+    # driver.switch_to.window(driver.window_handles[0])
+    # driver.close()
+    # driver.switch_to.window(driver.window_handles[0])
     # driver.set_script_timeout(60)
     driver.set_page_load_timeout(50)
 

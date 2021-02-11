@@ -75,9 +75,13 @@ def GoNextPage(page,*url):
         # print(url[0] + "/" + page)
         FillNames(url[0] + "/" + page)
 
+def GatherData():
+    d = FillNames(url)
+    return d
 
+# d = FillNames(url)
+# print(len(d))
 
-FillNames(url)
-for e in range(len(companies)):
-    print(str(e+1) + " - "  + companies[e])
+# for e in range(len(companies)):
+#     print(str(e+1) + " - "  + companies[e])
 

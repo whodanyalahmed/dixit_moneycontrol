@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 import time,sys,os
 # import pandas as pd
+# from screen import FillNames,url
 from sys import platform
 cur_path = sys.path[0]
 def resource_path(relative_path):
@@ -10,7 +11,6 @@ def resource_path(relative_path):
     except Exception:
         base_path = os.path.dirname(__file__)
     return os.path.join(base_path, relative_path)
-
 
 
 if platform == "linux" or platform == "linux2":
@@ -69,10 +69,12 @@ try:
         try:
             link = driver.find_element_by_partial_link_text(tempname)
             links.append(link)
-    # print(links)
-    if(len(links) <= 0 ):
-        link = driver.find_element_by_partial_link_text(shortcode)
-        links.append(link)    
+        # print(links)
+        except Exception as e:
+            print(e)
+        if(len(links) <= 0 ):
+            link = driver.find_element_by_partial_link_text(shortcode)
+            links.append(link)    
 # driver.find_element_by_partial_link_text(name).click()
     try:
         links[0].click()

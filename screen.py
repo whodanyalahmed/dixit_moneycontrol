@@ -13,8 +13,9 @@ print("Processing....")
 # tb = soup.find_all('table')
 companies = []
 
-url= "https://www.screener.in/screens/265380/Good-Solvent-Growth-companies"
+# url= "https://www.screener.in/screens/265380/Good-Solvent-Growth-companies"
 # url= "https://www.screener.in/screens/282622/Solvency-Screen/"
+url= "https://www.screener.in/screens/178/Growth-Stocks/"
 c = 0
 
 def FillNames(url):
@@ -65,6 +66,7 @@ def FillNames(url):
                 GoNextPage(0)
         except Exception as e:
             print("Cant find page or pages are ended " + str(e))
+    return companies
         
 def GoNextPage(page,*url):
     if(page == 0):
@@ -78,3 +80,4 @@ def GoNextPage(page,*url):
 FillNames(url)
 for e in range(len(companies)):
     print(str(e+1) + " - "  + companies[e])
+

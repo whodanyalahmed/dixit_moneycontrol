@@ -165,6 +165,20 @@ try:
         print("consoledated")
         for d in ConsoledatedL:
             PagesLink.append(d)
+    try:
+        Pl = driver.find_element_by_xpath("//a[@title='Profit & Loss' and @class='ProfitLoss']")
+        PLurl = Pl.get_attribute('href')
+        driver.get(PLurl)
+        PagesLink.append(PLurl)
+        try:
+            PL_url2 = getNextPageUrl()
+            print(PL_url2)
+            PagesLink.append(PL_url2)
+        except Exception as e:
+            print("error : cant find next page or " + str(e))
+            PagesLink.append(None)
+    except Exception as e:
+        print("Cant find profit loss or " + str(e) )
 
 except Exception as e:
     print("Something went wrong" + str(e))

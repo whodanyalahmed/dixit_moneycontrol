@@ -36,9 +36,14 @@ def ConOrSta(li):
         di = {}
         try:
             standAlone = getYear()
+            print(standAlone.text)
             standAloneYear_url = driver.current_url
             standAloneL.append(standAloneYear_url)
-            di['standalone'] = standAlone.text.split(" ")[1]
+            try:
+                print("info : Comma one...")
+                di['standalone'] = standAlone.text.split("'")[1]
+            except Exception as e:
+                di['standalone'] = standAlone.text.split(" ")[1]
             # print(di['standalone'] + " and waiting")
             # time.sleep(10)
             # standAlone_url2 = driver.find_element_by_xpath("//ul[@class='pagination']")
@@ -61,9 +66,14 @@ def ConOrSta(li):
         
         try:
             Consoledated = getYear()
+            print(Consoledated.text)
             Consoledated_url = driver.current_url
             ConsoledatedL.append(Consoledated_url)
-            di['consoledated']  = Consoledated.text.split(" ")[1]
+            try:
+                # print("info : Comma one...")
+                di['consoledated']  = Consoledated.text.split("'")[1]
+            except Exception as e:
+                di['consoledated']  = Consoledated.text.split(" ")[1]
             # print(di['consoledated'] + " and waiting")
             # time.sleep(10)
             # consoledated_url2 = driver.find_element_by_xpath("//ul[@class='pagination']/")
@@ -78,9 +88,9 @@ def ConOrSta(li):
             print("error : cant find consoledated years "+str(e))
             ConsoledatedL.append(None)
             ConsoledatedL.append(None)
-        print(type(di['consoledated']))
-        print(int(di['consoledated']))
-        print(int(di['standalone']))
+        # print(type(di['consoledated']))
+        # print(int(di['consoledated']))
+        # print(int(di['standalone']))
         if(int(di['consoledated']) < int(di['standalone'])):
             print("standalone")
             for d in standAloneL:

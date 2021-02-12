@@ -101,13 +101,13 @@ def ConOrSta(li):
 driver.maximize_window()
 # open link
 # driver.set_page_load_timeout(120)
-driver.set_page_load_timeout(30)
+driver.set_page_load_timeout(50)
 
 # data = pd.read_csv("Equity.csv")
 # data = data['Security Id'] 
 # shortcode = "HDFC"
 name = GatherData()
-name = name[0][0]
+name = name[0][1]
 print(name)
 try:
     driver.get("https://www.moneycontrol.com/india/stockpricequote/" + name[0])
@@ -163,10 +163,10 @@ try:
     driver.set_page_load_timeout(50)
     time.sleep(3)
 
+    driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
+    time.sleep(5)
     try:
-        driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
-        time.sleep(5)
-        Bs = driver.find_element_by_xpath("//a[@title='Balance Sheet' and @class='Balancesheet']")
+        Bs = driver.find_element_by_xpath("//a[@title='Balance Sheet']")
         Bsurl = Bs.get_attribute('href')
         driver.get(Bsurl)
         ConOrSta(PagesLink)

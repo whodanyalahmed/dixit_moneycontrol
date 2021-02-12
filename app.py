@@ -83,21 +83,29 @@ def ConOrSta(li):
                 ConsoledatedL.append(None)
 
         except Exception as e:
-            print("error : cant find consoledated years "+str(e))
-            ConsoledatedL.append(None)
-            ConsoledatedL.append(None)
+            print("info : cant find consoledated years "+str(e))
+            if(len(standAloneL) == 2):
+                for e in standAloneL:
+                    ConsoledatedL.append(e)
+            else:
+                ConsoledatedL.append(None)
+                ConsoledatedL.append(None)
         # print(type(di['consoledated']))
         # print(int(di['consoledated']))
-        # print(int(di['standalone']))
-        if(int(di['consoledated']) < int(di['standalone'])):
-            # print("standalone")
-            for d in standAloneL:
-                li.append(d)
-        else:
+        # print(int(di['standalone']))\
+        try:
+            if(int(di['consoledated']) < int(di['standalone'])):
+                # print("standalone")
+                for d in standAloneL:
+                    li.append(d)
+            else:
+                for d in ConsoledatedL:
+                    li.append(d)
+        except Exception as e:
             # print("consoledated")
             for d in ConsoledatedL:
-                li.append(d)
-        
+                    li.append(d)
+            
 driver.maximize_window()
 # open link
 # driver.set_page_load_timeout(120)
@@ -106,8 +114,8 @@ driver.set_page_load_timeout(50)
 # data = pd.read_csv("Equity.csv")
 # data = data['Security Id'] 
 # shortcode = "HDFC"
-name = GatherData()
-name = name[0][1]
+companyName_link = GatherData()
+name = companyName_link[0][3]
 print(name)
 try:
     driver.get("https://www.moneycontrol.com/india/stockpricequote/" + name[0])
@@ -124,7 +132,7 @@ PagesLink = []
 try:
     try:
         normalName = driver.find_elements_by_partial_link_text(name)
-        print(len(normalName))
+        # print(len(normalName))
         normalName[0].click()
     except Exception as e:
         for e in reversed(nameList):
@@ -135,6 +143,7 @@ try:
             nameL = []
             for c in tempname:
                 n = c.capitalize()
+                n = n.replace(".","")
                 nameL.append(n)
             tempname = " ".join(nameL) 
             # print(tempname)
@@ -174,7 +183,13 @@ try:
 
     except Exception as e:
         print("error : cant find balance sheet ")
+    try: 
+        nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[2]").text
+    except Exception as e:
+        print("info : cant find NSE "+str(e))
+        nse = name
 
+    print(nse)
     time.sleep(3)
     try:
         Pl = driver.find_element_by_xpath("//a[@title='Profit & Loss' and @class='ProfitLoss']")
@@ -218,9 +233,29 @@ try:
         print("success : fetched Capital Structure")
     except Exception as e:
         print("Cant find Cash flow or " + str(e))
-
+    # for screener
+    try:
+        screener_url = "https://www.screener.in/" 
+        com = companyName_link[1][3]
+        screener_url = screener_url+com
+        print(screener_url)
+    except Exception as e:
+        screener_url = None
+        print("error : cant get screener url or " + str(e))
+#   CF screener
+    try:
+        driver.get(com)
+        driver.find_element_by_xpath("//section[@id='cash-flow']/div[2]/table/tbody/tr[2]/td[1]/button").click()
+        time.sleep(2)
+        d = driver.find_element_by_xpath("//section[@id='cash-flow']/div[2]/table/tbody/tr[3]").text
+        d = str(d).split(' ')
+        d = d[3:]
+        print(d)
+    except Exception as e:
+        print(e)
 except Exception as e:
     print("Something went wrong" + str(e))
+
 
 print(PagesLink)
 print("success : complete")

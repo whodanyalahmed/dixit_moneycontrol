@@ -161,95 +161,23 @@ try:
     except Exception as e:
         print("error : cant find sector ")
     PagesLink.append(driver.current_url)
+    
+    driver.set_page_load_timeout(50)
     try:
         driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
         time.sleep(5)
         BS = driver.find_element_by_xpath("//a[@title='Balance Sheet']")
         driver.get(BS.get_attribute('href'))
+        ConOrSta(PagesLink)
     except Exception as e:
         print("error : cant find balance sheet ")
-    # print("waiting")
-    # time.sleep(10)
-    # print("changing tab")
-    # driver.switch_to.window(driver.window_handles[0])
-    # driver.close()
-    # driver.switch_to.window(driver.window_handles[0])
-    # driver.set_script_timeout(60)
-    driver.set_page_load_timeout(50)
 
-    ConOrSta(PagesLink)
 
-    # try:
-    #     standAlone = getYear()
-    #     standAloneYear_url = driver.current_url
-    #     standAloneL.append(standAloneYear_url)
-    #     di['standalone'] = standAlone.text.split(" ")[1]
-    #     # print(di['standalone'] + " and waiting")
-    #     # time.sleep(10)
-    #     # standAlone_url2 = driver.find_element_by_xpath("//ul[@class='pagination']")
-    #     try:
-    #         standAloneYear_url2 = getNextPageUrl()
-    #         standAloneL.append(standAloneYear_url2)
-    #     except Exception as e:
-    #         print("error : cant find next page or " + str(e))
-    #         standAloneL.append(None)
-
-    # except Exception as e:
-    #     print("error : cant find standalone years "+str(e))
-    #     standAloneL.append(None)
-    #     standAloneL.append(None)
-    
-    # try:
-    #     driver.find_element_by_id("#consolidated").click()
-    # except Exception as e:
-    #     print("error : cant find consoledated link "+str(e))
-    
-    # # print("waiting")
-    # # time.sleep(5)
-    
-    # try:
-    #     Consoledated = getYear()
-    #     Consoledated_url = driver.current_url
-    #     ConsoledatedL.append(Consoledated_url)
-    #     di['consoledated']  = Consoledated.text.split(" ")[1]
-    #     # print(di['consoledated'] + " and waiting")
-    #     # time.sleep(10)
-    #     # consoledated_url2 = driver.find_element_by_xpath("//ul[@class='pagination']/")
-    #     try:
-    #         consoledated_url2 = getNextPageUrl()
-    #         ConsoledatedL.append(consoledated_url2)
-    #     except Exception as e:
-    #         print("error : cant find next page or " + str(e))
-    #         ConsoledatedL.append(None)
-
-    # except Exception as e:
-    #     print("error : cant find consoledated years "+str(e))
-    #     ConsoledatedL.append(None)
-    #     ConsoledatedL.append(None)
-    # print(type(di['consoledated']))
-    # if(int(di['consoledated']) < int(di['standalone'])):
-    #     print("standalone")
-    #     for d in standAloneL:
-    #         PagesLink.append(d)
-    # else:
-    #     print("consoledated")
-    #     for d in ConsoledatedL:
-    #         PagesLink.append(d)
-    # Profit and loss
     try:
         Pl = driver.find_element_by_xpath("//a[@title='Profit & Loss' and @class='ProfitLoss']")
         PLurl = Pl.get_attribute('href')
         driver.get(PLurl)
         ConOrSta(PagesLink)
-
-        # PagesLink.append(PLurl)
-        # try:
-        #     PL_url2 = getNextPageUrl()
-        #     # print(PL_url2)
-        #     PagesLink.append(PL_url2)
-        # except Exception as e:
-        #     print("error : cant find next PL page or " + str(e))
-        #     PagesLink.append(None)
     except Exception as e:
         print("Cant find profit loss or " + str(e))
     # Querterly report
@@ -258,14 +186,6 @@ try:
         Qrurl = Qr.get_attribute('href')
         driver.get(Qrurl)
         ConOrSta(PagesLink)
-        # PagesLink.append(Qrurl)
-        # try:
-        #     Qr_url2 = getNextPageUrl()
-        #     # print(Qr_url2)
-        #     PagesLink.append(Qr_url2)
-        # except Exception as e:
-        #     print("error : cant find next QR page or " + str(e))
-        #     PagesLink.append(None)
     except Exception as e:
         print("Cant find Qurarterly report or " + str(e))
     # cash flow
@@ -274,15 +194,13 @@ try:
         Cfurl = Cf.get_attribute('href')
         driver.get(Cfurl)
         ConOrSta(PagesLink)
-
-        # PagesLink.append(Cfurl)
-        # try:
-        #     Cf_url2 = getNextPageUrl()
-        #     # print(Cf_url2)
-        #     PagesLink.append(Cf_url2)
-        # except Exception as e:
-        #     print("error : cant find next Cf page or " + str(e))
-        #     PagesLink.append(None)
+    except Exception as e:
+        print("Cant find Cash flow or " + str(e))
+    # Capital Structure
+    try:
+        Cf = driver.find_element_by_xpath("//a[@title='Capital Structure' and @class='CapitalStructure']")
+        Cfurl = Cf.get_attribute('href')
+        PagesLink.append(Cfurl)
     except Exception as e:
         print("Cant find Cash flow or " + str(e))
 

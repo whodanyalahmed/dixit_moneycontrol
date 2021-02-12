@@ -36,11 +36,10 @@ def ConOrSta(li):
         di = {}
         try:
             standAlone = getYear()
-            print(standAlone.text)
             standAloneYear_url = driver.current_url
             standAloneL.append(standAloneYear_url)
             try:
-                print("info : Comma one...")
+                # print("info : Comma one...")
                 di['standalone'] = standAlone.text.split("'")[1]
             except Exception as e:
                 di['standalone'] = standAlone.text.split(" ")[1]
@@ -66,7 +65,6 @@ def ConOrSta(li):
         
         try:
             Consoledated = getYear()
-            print(Consoledated.text)
             Consoledated_url = driver.current_url
             ConsoledatedL.append(Consoledated_url)
             try:
@@ -92,11 +90,11 @@ def ConOrSta(li):
         # print(int(di['consoledated']))
         # print(int(di['standalone']))
         if(int(di['consoledated']) < int(di['standalone'])):
-            print("standalone")
+            # print("standalone")
             for d in standAloneL:
                 li.append(d)
         else:
-            print("consoledated")
+            # print("consoledated")
             for d in ConsoledatedL:
                 li.append(d)
         
@@ -107,9 +105,9 @@ driver.set_page_load_timeout(30)
 
 # data = pd.read_csv("Equity.csv")
 # data = data['Security Id'] 
-shortcode = "HDFC"
+# shortcode = "HDFC"
 name = GatherData()
-name = name[0]
+name = name[0][0]
 print(name)
 try:
     driver.get("https://www.moneycontrol.com/india/stockpricequote/" + name[0])
@@ -146,9 +144,9 @@ try:
             # print(links)
             except Exception as e:
                 print(e)
-            if(len(links) <= 0 ):
-                link = driver.find_element_by_partial_link_text(shortcode)
-                links.append(link)    
+            # if(len(links) <= 0 ):
+            #     link = driver.find_element_by_partial_link_text(shortcode)
+            #     links.append(link)    
     # driver.find_element_by_partial_link_text(name).click()
         try:
             links[0].click()
@@ -163,29 +161,41 @@ try:
     PagesLink.append(driver.current_url)
     
     driver.set_page_load_timeout(50)
+    time.sleep(3)
+
     try:
         driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
         time.sleep(5)
-        BS = driver.find_element_by_xpath("//a[@title='Balance Sheet']")
-        driver.get(BS.get_attribute('href'))
+        Bs = driver.find_element_by_xpath("//a[@title='Balance Sheet' and @class='Balancesheet']")
+        Bsurl = Bs.get_attribute('href')
+        driver.get(Bsurl)
         ConOrSta(PagesLink)
+        print("success : fetched Balance Sheet")
+
     except Exception as e:
         print("error : cant find balance sheet ")
 
-
+    time.sleep(3)
     try:
         Pl = driver.find_element_by_xpath("//a[@title='Profit & Loss' and @class='ProfitLoss']")
         PLurl = Pl.get_attribute('href')
         driver.get(PLurl)
         ConOrSta(PagesLink)
+        print("success : fetched Profit and Loss")
+
     except Exception as e:
         print("Cant find profit loss or " + str(e))
     # Querterly report
+    
+    time.sleep(3)
+
     try:
         Qr = driver.find_element_by_xpath("//a[@title='Quarterly Results' and @class='QuarterlyResults']")
         Qrurl = Qr.get_attribute('href')
         driver.get(Qrurl)
         ConOrSta(PagesLink)
+        print("success : fetched Quarterly Report")
+
     except Exception as e:
         print("Cant find Qurarterly report or " + str(e))
     # cash flow
@@ -194,13 +204,18 @@ try:
         Cfurl = Cf.get_attribute('href')
         driver.get(Cfurl)
         ConOrSta(PagesLink)
+        print("success : fetched Cash Flow")
+
     except Exception as e:
         print("Cant find Cash flow or " + str(e))
     # Capital Structure
+    time.sleep(3)
+    
     try:
         Cf = driver.find_element_by_xpath("//a[@title='Capital Structure' and @class='CapitalStructure']")
         Cfurl = Cf.get_attribute('href')
         PagesLink.append(Cfurl)
+        print("success : fetched Capital Structure")
     except Exception as e:
         print("Cant find Cash flow or " + str(e))
 

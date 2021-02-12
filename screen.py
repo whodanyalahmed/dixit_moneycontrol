@@ -12,11 +12,13 @@ print("Processing....")
 
 # tb = soup.find_all('table')
 companies = []
-
-# url= "https://www.screener.in/screens/265380/Good-Solvent-Growth-companies"
+urls = []
+main= []
+url= "https://www.screener.in/screens/265380/Good-Solvent-Growth-companies"
 # url= "https://www.screener.in/screens/282622/Solvency-Screen/"
-url= "https://www.screener.in/screens/178/Growth-Stocks/"
+# url= "https://www.screener.in/screens/178/Growth-Stocks/"
 c = 0
+# z= 0
 
 def FillNames(url):
     html = requests.get(url).content
@@ -24,6 +26,16 @@ def FillNames(url):
     input_tag = soup.find_all('tr')
     for a in input_tag:
         company_name = a.get('data-row-company-name')
+        tr_soup = MakeSoup(str(a))
+        # print(tr_soup)
+        company_url  = tr_soup.find('a').get('href')
+        com = str(company_url).strip('/')
+        com = com.split('/')[0]
+        # print(com)
+        if(com == "company"):
+            urls.append(company_url)
+        else:
+            pass
         if(company_name == None):
             pass    
         else:
@@ -66,8 +78,10 @@ def FillNames(url):
                 GoNextPage(0)
         except Exception as e:
             print("Cant find page or pages are ended " + str(e))
-    return companies
-        
+    main.append(companies)
+    main.append(urls)
+    return main
+
 def GoNextPage(page,*url):
     if(page == 0):
         print("no more values found")
@@ -80,7 +94,8 @@ def GatherData():
     return d
 
 # d = FillNames(url)
-# print(len(d))
+# print(len(d[0]))
+# print(len(d[1]))
 
 # for e in range(len(companies)):
 #     print(str(e+1) + " - "  + companies[e])

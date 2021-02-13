@@ -193,6 +193,7 @@ try:
         print("info : cant find NSE "+str(e))
         nse = name
     DriveProcess(nse,sector)
+    
     # print(nse)
     time.sleep(3)
     try:

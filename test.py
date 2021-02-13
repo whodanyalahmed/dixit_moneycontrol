@@ -35,12 +35,15 @@ def main():
 
 
     folder = "Pharma"
+
+    # def CopyFile(service,"Bata India Ltd"):
+
     def CreateFolder(service,folder):
         # Call the Drive v3 API
-        results = service.files().list(
-            pageSize=10, fields="nextPageToken, files(id, name)").execute()
+        results = service.files().list(fields="nextPageToken, files(id, name)").execute()
         items = results.get('files', [])
 
+        # print(len(items))
         if not items:
             print('No files found.')
         else:
@@ -50,7 +53,7 @@ def main():
                     print("folder is already there")
                     print(item['name'])
                     return item['id']
-        print("folder is not there creating one...")
+        print("folder/File is not there creating one...")
         file_metadata = {
         'name': folder,
         'mimeType': 'application/vnd.google-apps.folder'
@@ -62,7 +65,15 @@ def main():
         # print(u'{0}'.format(item['name']))
 
 
-    i = CreateFolder(service,folder)
-    print(i)
+    try:
+        BataFile = CreateFolder(service,"Bata India Ltd")
+        PharmaId = CreateFolder(service,folder)
+        newfile = {'name': "BataFile",'parents' : [ { "id" : PharmaId } ]}
+        service.files().copy(fileId=BataFile, body=newfile).execute()
+        print("Success")
+    except Exception as e:
+        print(e)
+        print("fail")
+
 if __name__ == '__main__':
     main()

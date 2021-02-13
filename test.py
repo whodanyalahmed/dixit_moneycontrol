@@ -38,21 +38,9 @@ def main():
 
     # def CopyFile(service,"Bata India Ltd"):
 
-    def CreateFolder(service,folder):
+    def CreateFolder(folder):
         # Call the Drive v3 API
-        results = service.files().list(fields="nextPageToken, files(id, name)").execute()
-        items = results.get('files', [])
-
-        # print(len(items))
-        if not items:
-            print('No files found.')
-        else:
-            # print('Files:')
-            for item in items:
-                if(item['name'] == folder):
-                    print("folder is already there")
-                    print(item['name'])
-                    return item['id']
+        CheckFileDir(folder)
         print("folder/File is not there creating one...")
         file_metadata = {
         'name': folder,
@@ -64,16 +52,45 @@ def main():
         return file.get('id')
         # print(u'{0}'.format(item['name']))
 
+    def CheckFileDir(FileName):
+        results = service.files().list(fields="nextPageToken, files(id, name)").execute()
+        items = results.get('files', [])
 
-    try:
-        BataFile = CreateFolder(service,"Bata India Ltd")
-        PharmaId = CreateFolder(service,folder)
-        newfile = {'name': "BataFile",'parents' : [ { "id" : PharmaId } ]}
+        # print(len(items))
+        if not items:
+            print('No files found.')
+            return None
+        else:
+            # print('Files:')
+            for item in items:
+                # print(item['name'])
+                if(item['name'] == FileName):
+                    print("folder is already there")
+                    # print(item['name'])
+                    return item['id']
+    def CopyToFolder(folder,name):
+        # Find Bata File
+        BataFile = CheckFileDir("Bata India Ltd")
+        # Find sector if not then create
+        sector = CreateFolder(folder)
+        newfile = {'name': name,'parents' : [ sector ]}
         service.files().copy(fileId=BataFile, body=newfile).execute()
         print("Success")
+
+        
+    try:
+        # Find sector if not then create
+        sector = folder
+        Filename = "BataFile"
+        IsFileThere = CheckFileDir(Filename)
+        if(IsFileThere == None):
+            CopyToFolder(sector,Filename)
+        else:
+            print("File is already there")
+        
     except Exception as e:
         print(e)
-        print("fail")
+        print("fail to process")
 
 if __name__ == '__main__':
     main()

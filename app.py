@@ -1,5 +1,6 @@
 from selenium import webdriver
 from screen import GatherData
+from Drive import DriveProcess
 from selenium.common.exceptions import TimeoutException
 import time,sys,os
 # import pandas as pd
@@ -191,8 +192,8 @@ try:
     except Exception as e:
         print("info : cant find NSE "+str(e))
         nse = name
-
-    print(nse)
+    DriveProcess(nse,sector)
+    # print(nse)
     time.sleep(3)
     try:
         Pl = driver.find_element_by_xpath("//a[@title='Profit & Loss' and @class='ProfitLoss']")
@@ -263,4 +264,5 @@ except Exception as e:
 
 
 print(PagesLink)
+
 print("success : complete")

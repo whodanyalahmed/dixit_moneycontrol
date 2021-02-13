@@ -34,7 +34,7 @@ def main():
     service = build('drive', 'v3', credentials=creds)
 
 
-    folder = "Pharma"
+    folder = "Food Process"
 
     # def CopyFile(service,"Bata India Ltd"):
 
@@ -65,32 +65,37 @@ def main():
             for item in items:
                 # print(item['name'])
                 if(item['name'] == FileName):
-                    print("folder is already there")
+                    print("folder/File is already there")
                     # print(item['name'])
                     return item['id']
-    def CopyToFolder(folder,name):
+    def CopyToFolder(folderId,name):
         # Find Bata File
         BataFile = CheckFileDir("Bata India Ltd")
         # Find sector if not then create
-        sector = CreateFolder(folder)
-        newfile = {'name': name,'parents' : [ sector ]}
+        # sector = CreateFolder(folder)
+        newfile = {'name': name,'parents' : [ folderId ]}
         service.files().copy(fileId=BataFile, body=newfile).execute()
-        print("Success")
+        print("Success copying file")
 
-        
-    try:
-        # Find sector if not then create
-        sector = folder
-        Filename = "BataFile"
-        IsFileThere = CheckFileDir(Filename)
-        if(IsFileThere == None):
-            CopyToFolder(sector,Filename)
-        else:
-            print("File is already there")
-        
-    except Exception as e:
-        print(e)
-        print("fail to process")
+    def DriveProcess(filename,folder):    
+        try:
+            # Find sector if not then create
+            Filename = filename
+                    # Find sector if not then create
+            sectorId = CheckFileDir(folder)
+            IsFileThere = CheckFileDir(Filename)
+            if(sectorId == None):
+                sectorId = CreateFolder(folder)
+            else:
+                pass
+            if(IsFileThere == None):
+                CopyToFolder(sectorId,Filename)
+            else:
+                print("File is already there")
+            
+        except Exception as e:
+            print(e)
+            print("fail to process")
 
 if __name__ == '__main__':
     main()

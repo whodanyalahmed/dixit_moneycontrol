@@ -26,6 +26,7 @@ def getYear():
     driver.execute_script("window.scrollTo(0, 700)") 
     return driver.find_element_by_xpath("//div[@id='standalone-new']/div[1]/table/tbody/tr[1]/td[2]")
 def getNextPageUrl():
+    driver.execute_script("window.scrollTo(0, 700)") 
     url = driver.find_element_by_css_selector('span.nextpaging')
     url  = url.find_element_by_xpath('..').get_attribute('href')
     return url
@@ -109,15 +110,15 @@ def ConOrSta(li):
 driver.maximize_window()
 # open link
 # driver.set_page_load_timeout(120)
-driver.set_page_load_timeout(50)
+driver.set_page_load_timeout(30)
 
 # data = pd.read_csv("Equity.csv")
 # data = data['Security Id'] 
 # shortcode = "HDFC"
 companyName_link = GatherData()
 # for n in range(len(companyName_link)):
-n = 4
-name = companyName_link[0][n]
+index = 4
+name = companyName_link[0][index]
 print(name)
 try:
     driver.get("https://www.moneycontrol.com/india/stockpricequote/" + name[0])
@@ -238,12 +239,13 @@ try:
     # for screener
     try:
         screener_url = "https://www.screener.in/" 
-        com = companyName_link[1][n]
+        com = companyName_link[1][index]
         screener_url = screener_url+com
         PagesLink.append(screener_url)
         # print(screener_url)
     except Exception as e:
         screener_url = None
+        PagesLink.append(screener_url)
         print("error : cant get screener url or " + str(e))
 #   CF screener
     try:

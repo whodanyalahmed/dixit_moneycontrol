@@ -1,6 +1,5 @@
 driver
 test
-test.py
 client_id.json
 client_secret.json
 token.pickle

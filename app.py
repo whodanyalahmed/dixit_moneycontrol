@@ -23,7 +23,7 @@ else:
     path = resource_path('driver/chromedriver.exe')
     # Windows...
 # print("\n\nProcessing.....")
-Replace = input("Do you want to replace files? (y/n)")
+Replace = input("Do you want to replace files? (y/n) : ")
 Replace = Replace.lower()
 if(Replace == "y"):
     Replace_Bool = True
@@ -147,12 +147,15 @@ index = 4
 name = companyName_link[0][index]
 print(name)
 try:
-    if(Replace_Bool):
-        fileId = CheckFileDir(name)
-        delete_file(fileId)
-        print("success: deleted old file")
-    else:
+    fileId = CheckFileDir(name)
+    if(fileId == None):
         pass
+    else:
+        if(Replace_Bool):
+            delete_file(fileId)
+            print("success: deleted old file")
+        else:
+            pass
 except Exception as e:
     print(e)
 try:

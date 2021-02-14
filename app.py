@@ -1,6 +1,7 @@
 from selenium import webdriver
 from screen import GatherData
-from Drive import DriveProcess
+from spread import updateNSE,GetLinks
+from Drive import DriveProcess,CheckFileDir
 from selenium.common.exceptions import TimeoutException
 import time,sys,os
 # import pandas as pd
@@ -172,7 +173,7 @@ try:
     except Exception as e:
         print("error : cant find sector ")
     PagesLink.append(driver.current_url)
-    
+
     driver.set_page_load_timeout(50)
     time.sleep(3)
 
@@ -191,10 +192,30 @@ try:
         nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[2]").text
     except Exception as e:
         print("info : cant find NSE "+str(e))
-        nse = name
+        nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
     DriveProcess(nse,sector)
-    
+    SpreadsheetId = CheckFileDir(nse)
+    updateNSE(str(nse).upper(),SpreadsheetId)
+    values = GetLinks(SpreadsheetId)
+    def saveDataToValues():
+        for link_index in range(len(PagesLink)):
+            values[link_index][0] = PagesLink[link_index]
+    try:
+        PagesLink_len = len(PagesLink)
+        if(PagesLink == 3):
+            saveDataToValues()
+        elif(PagesLink == 2):
+            saveDataToValues()
+            values[2][0] = None
+        else:
+            for none_range in range(3):
+                values[none_range][0] = None
+    except Exception as e:
+        print(e)
+
+
     # print(nse)
+
     time.sleep(3)
     try:
         Pl = driver.find_element_by_xpath("//a[@title='Profit & Loss' and @class='ProfitLoss']")

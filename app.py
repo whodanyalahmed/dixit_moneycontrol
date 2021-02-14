@@ -1,6 +1,6 @@
 from selenium import webdriver
 from screen import GatherData
-from spread import updateNSE,GetLinks
+from spread import updateNSE,GetLinks,UpdateCF,UpdateLink
 from Drive import DriveProcess,CheckFileDir
 from selenium.common.exceptions import TimeoutException
 import time,sys,os
@@ -131,6 +131,7 @@ companyName_link = GatherData()
 index = 4
 name = companyName_link[0][index]
 print(name)
+
 try:
     driver.get("https://www.moneycontrol.com/india/stockpricequote/" + name[0])
     print("success : Loaded...")
@@ -240,7 +241,7 @@ try:
     populatePairValues(ProfitLossLinks,3,4)
     # Querterly report
     
-    time.sleep(3)
+    # time.sleep(3)
 
     try:
         Qr = driver.find_element_by_xpath("//a[@title='Quarterly Results' and @class='QuarterlyResults']")
@@ -251,8 +252,8 @@ try:
 
     except Exception as e:
         print("Cant find Qurarterly report or " + str(e))
-    QuarterlyLinks = Find_links("quarterly",PagesLink)
-    populatePairValues(QuarterlyLinks,5,6)
+    # QuarterlyLinks = Find_links("quarterly",PagesLink)
+    # populatePairValues(QuarterlyLinks,5,6)
     # cash flow
     try:
         Cf = driver.find_element_by_xpath("//a[@title='Cash Flows' and @class='CashFlows']")
@@ -266,7 +267,7 @@ try:
     CashFlowLinks = Find_links("cash",PagesLink)
     populatePairValues(CashFlowLinks,7,8)
     # Capital Structure
-    time.sleep(3)
+    # time.sleep(3)
     
     try:
         Cf = driver.find_element_by_xpath("//a[@title='Capital Structure' and @class='CapitalStructure']")
@@ -295,21 +296,37 @@ try:
         print("error : cant get screener url or " + str(e))
     ScreenerLinks = Find_links("screener",PagesLink)
     populateSingleValues(ScreenerLinks,13)
+    print(values)
+
+    # UpdateLink(SpreadsheetId,vale)
 #   CF screener
     try:
         driver.get(screener_url)
         driver.find_element_by_xpath("//section[@id='cash-flow']/div[2]/table/tbody/tr[2]/td[1]/button").click()
         time.sleep(2)
-        d = driver.find_element_by_xpath("//section[@id='cash-flow']/div[2]/table/tbody/tr[3]").text
-        d = str(d).split(' ')
-        d = d[3:]
-        print(d)
+        cf = driver.find_element_by_xpath("//section[@id='cash-flow']/div[2]/table/tbody/tr[3]").text
+        cf = str(cf).split(' ')
+        cf = cf[3:]
+        print(cf)
     except Exception as e:
         print(e)
+
+    if(len(cf) >= 10 ):
+        cf = cf[-10:]
+    else:
+        len_cf = len(cf)
+        remaining = 10-len_cf
+        d_list = [' ']*remaining
+        for e in d_list:
+            cf.append(e)
+    cf_format = []
+    cf_format.append(cf)
+    print(cf_format)
+    # UpdateCF(I,cf_format)
 except Exception as e:
     print("Something went wrong" + str(e))
 
 
-print(PagesLink)
+# print(PagesLink)
 
 print("success : complete")

@@ -14,7 +14,9 @@ print("Processing....")
 companies = []
 urls = []
 main= []
-url= "https://www.screener.in/screens/265380/Good-Solvent-Growth-companies"
+url = input("Enter screener url: ")
+
+# url= "https://www.screener.in/screens/265380/Good-Solvent-Growth-companies"
 # url= "https://www.screener.in/screens/282622/Solvency-Screen/"
 # url= "https://www.screener.in/screens/178/Growth-Stocks/"
 c = 0

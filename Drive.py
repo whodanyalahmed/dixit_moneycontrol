@@ -40,7 +40,7 @@ folder = "Food Process"
 
 def CreateFolder(folder):
     # Call the Drive v3 API
-    CheckFileDir(folder)
+    # CheckFileDir(folder)
     print("folder/File is not there creating one...")
     file_metadata = {
     'name': folder,

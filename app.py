@@ -199,11 +199,14 @@ try:
 
     except Exception as e:
         print("error : cant find balance sheet ")
-    try: 
+    try:
         nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[2]").text
+        if(nse == "" or nse == None):
+            nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
     except Exception as e:
         print("info : cant find NSE "+str(e))
         nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
+    print(nse)
     SpreadsheetId = CheckFileDir(nse)
     if(SpreadsheetId == None):
         print("file is not already there creating one")
@@ -211,8 +214,11 @@ try:
         SpreadsheetId = CheckFileDir(nse)
     else:
         print("file is already there")
-
-    updateNSE(str(nse).upper(),SpreadsheetId)
+    print("after driveprocess")
+    Nse_string= str(nse).upper()
+    print(SpreadsheetId)
+    print(Nse_string)
+    updateNSE(Nse_string,SpreadsheetId)
     values = GetLinks(SpreadsheetId)
     values[0][0] = HomePage
 

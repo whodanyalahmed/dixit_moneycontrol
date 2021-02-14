@@ -134,7 +134,7 @@ driver.set_page_load_timeout(30)
 # shortcode = "HDFC"
 
 try:
-    stock = CheckFileDir("Stocks")
+    stockId = CheckFileDir("Stocks")
     if(stock == None):
         stockId = CreateFolder("Stocks")
     else:

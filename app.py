@@ -231,13 +231,15 @@ try:
         nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
     # print(nse)
     SpreadsheetId = CheckFileDir(name)
-
-    if(SpreadsheetId == None):
-        print("file is not already there creating one")
-        DriveProcess(name,sector,stockId)
-        SpreadsheetId = CheckFileDir(name)
-    else:
-        print("file is already there")
+    try: 
+        if(SpreadsheetId == None):
+            print("file is not already there creating one")
+            DriveProcess(name,sector,stockId)
+            SpreadsheetId = CheckFileDir(name)
+        else:
+            print("file is already there")
+    except Exception as e:
+        print(e)
     Nse_string= str(nse).upper()
     # print(SpreadsheetId)
     # print(Nse_string)

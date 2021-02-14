@@ -32,7 +32,16 @@ def getNextPageUrl():
     url = driver.find_element_by_css_selector('span.nextpaging')
     url  = url.find_element_by_xpath('..').get_attribute('href')
     return url
-
+def Find_links(name,urls):
+    pair_links = []
+    for url in urls:
+        # print(url)
+        if name in url:
+            print("found " + name)
+            pair_links.append(url)
+    if(len(pair_links) == 0):
+        pair_links = [None,None]
+    return pair_links
 def ConOrSta(li):
         standAloneL = []
         ConsoledatedL = []
@@ -172,7 +181,8 @@ try:
         print(sector)
     except Exception as e:
         print("error : cant find sector ")
-    PagesLink.append(driver.current_url)
+    HomePage = driver.current_url
+    PagesLink.append(HomePage)
 
     driver.set_page_load_timeout(50)
     time.sleep(3)
@@ -197,24 +207,23 @@ try:
     SpreadsheetId = CheckFileDir(nse)
     updateNSE(str(nse).upper(),SpreadsheetId)
     values = GetLinks(SpreadsheetId)
-    def saveDataToValues():
-        for link_index in range(len(PagesLink)):
-            values[link_index][0] = PagesLink[link_index]
-    try:
-        PagesLink_len = len(PagesLink)
-        if(PagesLink == 3):
-            saveDataToValues()
-        elif(PagesLink == 2):
-            saveDataToValues()
-            values[2][0] = None
+    values[0][0] = HomePage
+
+    
+    def populatePairValues(PairLinks,index1,index2):
+        if(len(PairLinks) == 2):
+            values[index1][0] = PairLinks[0]
+            values[index2][0] = PairLinks[1]
+        elif(len(PairLinks) == 1):
+            values[index1][0] = PairLinks[0]
+            values[index2][0] = None
         else:
-            for none_range in range(3):
-                values[none_range][0] = None
-    except Exception as e:
-        print(e)
-
-
-    # print(nse)
+            values[index1][0] = None
+            values[index2][0] = None
+        
+    BalanceSheetLinks = Find_links("balance",PagesLink)
+    populatePairValues(BalanceSheetLinks,1,2)
+    print(nse)
 
     time.sleep(3)
     try:
@@ -226,6 +235,9 @@ try:
 
     except Exception as e:
         print("Cant find profit loss or " + str(e))
+            
+    ProfitLossLinks = Find_links("profit",PagesLink)
+    populatePairValues(ProfitLossLinks,3,4)
     # Querterly report
     
     time.sleep(3)
@@ -239,6 +251,8 @@ try:
 
     except Exception as e:
         print("Cant find Qurarterly report or " + str(e))
+    QuarterlyLinks = Find_links("quarterly",PagesLink)
+    populatePairValues(QuarterlyLinks,5,6)
     # cash flow
     try:
         Cf = driver.find_element_by_xpath("//a[@title='Cash Flows' and @class='CashFlows']")
@@ -249,6 +263,8 @@ try:
 
     except Exception as e:
         print("Cant find Cash flow or " + str(e))
+    CashFlowLinks = Find_links("cash",PagesLink)
+    populatePairValues(CashFlowLinks,7,8)
     # Capital Structure
     time.sleep(3)
     
@@ -258,10 +274,17 @@ try:
         PagesLink.append(Cfurl)
         print("success : fetched Capital Structure")
     except Exception as e:
-        print("Cant find Cash flow or " + str(e))
+        print("Cant find Capital Structure or " + str(e))
+    def populateSingleValues(PairLinks,index1):
+        if(len(PairLinks) == 2):
+            values[index1][0] = PairLinks[0]
+        else:
+            values[index1][0] = None
+    CapitalLinks = Find_links("capital",PagesLink)
+    populateSingleValues(CapitalLinks,9)
     # for screener
     try:
-        screener_url = "https://www.screener.in/" 
+        screener_url = "https://www.screener.in" 
         com = companyName_link[1][index]
         screener_url = screener_url+com
         PagesLink.append(screener_url)
@@ -270,6 +293,8 @@ try:
         screener_url = None
         PagesLink.append(screener_url)
         print("error : cant get screener url or " + str(e))
+    ScreenerLinks = Find_links("screener",PagesLink)
+    populateSingleValues(ScreenerLinks,13)
 #   CF screener
     try:
         driver.get(screener_url)

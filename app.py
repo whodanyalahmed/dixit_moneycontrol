@@ -204,8 +204,14 @@ try:
     except Exception as e:
         print("info : cant find NSE "+str(e))
         nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
-    DriveProcess(nse,sector)
     SpreadsheetId = CheckFileDir(nse)
+    if(SpreadsheetId == None):
+        print("file is not already there creating one")
+        DriveProcess(nse,sector)
+        SpreadsheetId = CheckFileDir(nse)
+    else:
+        print("file is already there")
+
     updateNSE(str(nse).upper(),SpreadsheetId)
     values = GetLinks(SpreadsheetId)
     values[0][0] = HomePage
@@ -298,7 +304,7 @@ try:
     populateSingleValues(ScreenerLinks,13)
     print(values)
 
-    # UpdateLink(SpreadsheetId,vale)
+    UpdateLink(SpreadsheetId,values)
 #   CF screener
     try:
         driver.get(screener_url)
@@ -322,7 +328,7 @@ try:
     cf_format = []
     cf_format.append(cf)
     print(cf_format)
-    # UpdateCF(I,cf_format)
+    UpdateCF(SpreadsheetId,cf_format)
 except Exception as e:
     print("Something went wrong" + str(e))
 

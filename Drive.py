@@ -33,20 +33,20 @@ if not creds or not creds.valid:
 service = build('drive', 'v3', credentials=creds)
 
 
-folder = "Food Process"
-
 # def CopyFile(service,"Bata India Ltd"):
 
 
-def CreateFolder(folder):
+def CreateFolder(folder,parent=None):
     # Call the Drive v3 API
     # CheckFileDir(folder)
     print("folder/File is not there creating one...")
-    file_metadata = {
+    body = {
     'name': folder,
     'mimeType': 'application/vnd.google-apps.folder'
     }
-    file = service.files().create(body=file_metadata,
+    if parent:
+        body['parents'] = [parent]
+    file = service.files().create(body=body,
                                         fields='id').execute()
     print('Folder ID: %s'% file.get('id'))
     return file.get('id')
@@ -76,8 +76,19 @@ def CopyToFolder(folderId,name):
     newfile = {'name': name,'parents' : [ folderId ]}
     service.files().copy(fileId=BataFile, body=newfile).execute()
     print("Success copying file")
+def delete_file(file_id):
+  """Permanently delete a file, skipping the trash.
 
-def DriveProcess(filename,folder):    
+  Args:
+    service: Drive API service instance.
+    file_id: ID of the file to delete.
+  """
+  try:
+    service.files().delete(fileId=file_id).execute()
+  except Exception as e:
+    print('An error occurred: %s',e)
+
+def DriveProcess(filename,folder,stockId):    
     try:
         # Find sector if not then create
         Filename = filename
@@ -85,7 +96,7 @@ def DriveProcess(filename,folder):
         sectorId = CheckFileDir(folder)
         IsFileThere = CheckFileDir(Filename)
         if(sectorId == None):
-            sectorId = CreateFolder(folder)
+            sectorId = CreateFolder(folder,stockId)
         else:
             pass
         if(IsFileThere == None):

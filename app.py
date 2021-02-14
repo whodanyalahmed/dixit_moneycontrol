@@ -1,7 +1,7 @@
 from selenium import webdriver
 from screen import GatherData
 from spread import updateNSE,GetLinks,UpdateCF,UpdateLink
-from Drive import DriveProcess,CheckFileDir
+from Drive import DriveProcess,CheckFileDir,delete_file,CreateFolder
 from selenium.common.exceptions import TimeoutException
 import time,sys,os
 # import pandas as pd
@@ -126,12 +126,34 @@ driver.set_page_load_timeout(30)
 # data = pd.read_csv("Equity.csv")
 # data = data['Security Id'] 
 # shortcode = "HDFC"
+Replace = input("Do you want to replace files? (y/n)")
+Replace = Replace.lower()
+if(Replace == "y"):
+    Replace_Bool = True
+else:
+    Replace_Bool = False
+try:
+    stock = CheckFileDir("Stocks")
+    if(stock == None):
+        stockId = CreateFolder("Stocks")
+    else:
+        pass
+except Exception as e:
+    print(e)
 companyName_link = GatherData()
 # for n in range(len(companyName_link)):
 index = 4
 name = companyName_link[0][index]
 print(name)
-
+try:
+    if(Replace_Bool):
+        fileId = CheckFileDir(name)
+        delete_file(fileId)
+        print("success: deleted old file")
+    else:
+        pass
+except Exception as e:
+    print(e)
 try:
     driver.get("https://www.moneycontrol.com/india/stockpricequote/" + name[0])
     print("success : Loaded...")
@@ -208,21 +230,25 @@ try:
         nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
     print(nse)
     SpreadsheetId = CheckFileDir(nse)
+
     if(SpreadsheetId == None):
         print("file is not already there creating one")
-        DriveProcess(nse,sector)
-        SpreadsheetId = CheckFileDir(nse)
+        DriveProcess(name,sector,stockId)
+        SpreadsheetId = CheckFileDir(name)
     else:
         print("file is already there")
-    print("after driveprocess")
     Nse_string= str(nse).upper()
-    print(SpreadsheetId)
-    print(Nse_string)
-    updateNSE(Nse_string,SpreadsheetId)
+    # print(SpreadsheetId)
+    # print(Nse_string)
+    try:
+
+        updateNSE(Nse_string,SpreadsheetId)
+    except Exception as e:
+        print("error : cant update ")
+        print(e)
+    
     values = GetLinks(SpreadsheetId)
     values[0][0] = HomePage
-
-    
     def populatePairValues(PairLinks,index1,index2):
         if(len(PairLinks) == 2):
             values[index1][0] = PairLinks[0]

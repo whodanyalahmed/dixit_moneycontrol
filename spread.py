@@ -67,7 +67,7 @@ def GetLinks(Id):
     values = GetExcelValues(Links_Range,Id)
     return values
 def UpdateLink(Id,values):
-    Links_Range = "B8:B21"
+    Links_Range = "B8:B18"
     request = sheet.values().update(spreadsheetId=Id, range=Links_Range, valueInputOption="USER_ENTERED", body={"values" : values})
     try:
         response = request.execute()

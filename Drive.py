@@ -70,11 +70,19 @@ def CheckFileDir(FileName):
                 return item['id']
 def CopyToFolder(folderId,name):
     # Find Bata File
-    BataFile = CheckFileDir("Bata India Ltd")
+    BataFile = CheckFileDir("538896")
     # Find sector if not then create
     # sector = CreateFolder(folder)
     newfile = {'name': name,'parents' : [ folderId ]}
     service.files().copy(fileId=BataFile, body=newfile).execute()
+    print("Success copying file")
+
+def MoveToFolder(folderId,fileId):
+    # Find Bata File
+    # Find sector if not then create
+    # sector = CreateFolder(folder)
+    newfile = {'parents' : [ folderId ]}
+    service.files().move(fileId=fileId, body=newfile).execute()
     print("Success copying file")
 def delete_file(file_id):
   """Permanently delete a file, skipping the trash.

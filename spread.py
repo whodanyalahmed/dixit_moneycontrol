@@ -63,7 +63,7 @@ def updateNSE(name,Id):
     print(response)
 
 def GetLinks(Id):
-    Links_Range = "B8:B21"
+    Links_Range = "B8:B18"
     values = GetExcelValues(Links_Range,Id)
     return values
 def UpdateLink(Id,values):
@@ -74,11 +74,11 @@ def UpdateLink(Id,values):
     except Exception as e:
         print("error : something went wrong or " + str(e))
 def GetCF(Id):
-    Links_Range = "B20:M20"
+    Links_Range = "B21:M20"
     values = GetExcelValues(Links_Range,Id)
     return values
 def UpdateCF(Id,values):
-    CF_Range = "B20:M20"
+    CF_Range = "B21:M20"
     request = sheet.values().update(spreadsheetId=Id, range=CF_Range, valueInputOption="USER_ENTERED", body={"values" : values})
     try:
         response = request.execute()

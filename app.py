@@ -23,6 +23,12 @@ else:
     path = resource_path('driver/chromedriver.exe')
     # Windows...
 # print("\n\nProcessing.....")
+Replace = input("Do you want to replace files? (y/n)")
+Replace = Replace.lower()
+if(Replace == "y"):
+    Replace_Bool = True
+else:
+    Replace_Bool = False
 driver =webdriver.Chrome(path)
 def getYear():
     driver.execute_script("window.scrollTo(0, 700)") 
@@ -126,12 +132,7 @@ driver.set_page_load_timeout(30)
 # data = pd.read_csv("Equity.csv")
 # data = data['Security Id'] 
 # shortcode = "HDFC"
-Replace = input("Do you want to replace files? (y/n)")
-Replace = Replace.lower()
-if(Replace == "y"):
-    Replace_Bool = True
-else:
-    Replace_Bool = False
+
 try:
     stock = CheckFileDir("Stocks")
     if(stock == None):
@@ -228,8 +229,8 @@ try:
     except Exception as e:
         print("info : cant find NSE "+str(e))
         nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
-    print(nse)
-    SpreadsheetId = CheckFileDir(nse)
+    # print(nse)
+    SpreadsheetId = CheckFileDir(name)
 
     if(SpreadsheetId == None):
         print("file is not already there creating one")
@@ -259,10 +260,12 @@ try:
         else:
             values[index1][0] = None
             values[index2][0] = None
-        
-    BalanceSheetLinks = Find_links("balance",PagesLink)
-    populatePairValues(BalanceSheetLinks,1,2)
-    print(nse)
+    try:
+
+        BalanceSheetLinks = Find_links("balance",PagesLink)
+        populatePairValues(BalanceSheetLinks,1,2)
+    except Exception as e:
+        print(e)
 
     time.sleep(3)
     try:
@@ -274,9 +277,11 @@ try:
 
     except Exception as e:
         print("Cant find profit loss or " + str(e))
-            
-    ProfitLossLinks = Find_links("profit",PagesLink)
-    populatePairValues(ProfitLossLinks,3,4)
+    try:
+        ProfitLossLinks = Find_links("profit",PagesLink)
+        populatePairValues(ProfitLossLinks,3,4)
+    except Exception as e:
+        print(e)
     # Querterly report
     
     # time.sleep(3)
@@ -290,8 +295,11 @@ try:
 
     except Exception as e:
         print("Cant find Qurarterly report or " + str(e))
-    QuarterlyLinks = Find_links("quarterly",PagesLink)
-    populatePairValues(QuarterlyLinks,5,6)
+    try:
+        QuarterlyLinks = Find_links("quarterly",PagesLink)
+        populatePairValues(QuarterlyLinks,5,6)
+    except Exception as e:
+        print(e)
     # cash flow
     try:
         Cf = driver.find_element_by_xpath("//a[@title='Cash Flows' and @class='CashFlows']")
@@ -302,8 +310,11 @@ try:
 
     except Exception as e:
         print("Cant find Cash flow or " + str(e))
-    CashFlowLinks = Find_links("cash",PagesLink)
-    populatePairValues(CashFlowLinks,7,8)
+    try:
+        CashFlowLinks = Find_links("cash",PagesLink)
+        populatePairValues(CashFlowLinks,7,8)
+    except Exception as e:
+        print(e)
     # Capital Structure
     # time.sleep(3)
     
@@ -320,9 +331,11 @@ try:
             values[index1][0] = PairLinks[0]
         else:
             values[index1][0] = None
-
-    CapitalLinks = Find_links("capital",PagesLink)
-    populateSingleValues(CapitalLinks,9)
+    try:
+        CapitalLinks = Find_links("capital",PagesLink)
+        populateSingleValues(CapitalLinks,9)
+    except Exception as e:
+        print(e)
     # for screener
     try:
         screener_url = "https://www.screener.in" 
@@ -334,16 +347,21 @@ try:
         screener_url = None
         PagesLink.append(screener_url)
         print("error : cant get screener url or " + str(e))
-    ScreenerLinks = Find_links("screener",PagesLink)
-    populateSingleValues(ScreenerLinks,13)
+    try:
+        ScreenerLinks = Find_links("screener",PagesLink)
+        populateSingleValues(ScreenerLinks,13)
+    except Exception as e:
+        print(e)
     print(values)
-
-    UpdateLink(SpreadsheetId,values)
+    try:
+        UpdateLink(SpreadsheetId,values)
+    except Exception as e:
+        print(e)
 #   CF screener
     try:
         driver.get(screener_url)
         driver.find_element_by_xpath("//section[@id='cash-flow']/div[2]/table/tbody/tr[2]/td[1]/button").click()
-        time.sleep(2)
+        time.sleep(5)
         cf = driver.find_element_by_xpath("//section[@id='cash-flow']/div[2]/table/tbody/tr[3]").text
         cf = str(cf).split(' ')
         cf = cf[3:]
@@ -362,7 +380,10 @@ try:
     cf_format = []
     cf_format.append(cf)
     print(cf_format)
-    UpdateCF(SpreadsheetId,cf_format)
+    try:
+        UpdateCF(SpreadsheetId,cf_format)
+    except Exception as e:
+        print(e)
 except Exception as e:
     print("Something went wrong" + str(e))
 

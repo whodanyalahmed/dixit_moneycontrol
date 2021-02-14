@@ -135,7 +135,7 @@ driver.set_page_load_timeout(30)
 
 try:
     stockId = CheckFileDir("Stocks")
-    if(stock == None):
+    if(stockId == None):
         stockId = CreateFolder("Stocks")
     else:
         pass

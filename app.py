@@ -264,8 +264,8 @@ try:
 
     except Exception as e:
         print("Cant find Qurarterly report or " + str(e))
-    # QuarterlyLinks = Find_links("quarterly",PagesLink)
-    # populatePairValues(QuarterlyLinks,5,6)
+    QuarterlyLinks = Find_links("quarterly",PagesLink)
+    populatePairValues(QuarterlyLinks,5,6)
     # cash flow
     try:
         Cf = driver.find_element_by_xpath("//a[@title='Cash Flows' and @class='CashFlows']")
@@ -288,11 +288,13 @@ try:
         print("success : fetched Capital Structure")
     except Exception as e:
         print("Cant find Capital Structure or " + str(e))
+
     def populateSingleValues(PairLinks,index1):
-        if(len(PairLinks) == 2):
+        if(len(PairLinks) == 1):
             values[index1][0] = PairLinks[0]
         else:
             values[index1][0] = None
+
     CapitalLinks = Find_links("capital",PagesLink)
     populateSingleValues(CapitalLinks,9)
     # for screener

@@ -203,7 +203,7 @@ for index in range(len(companyName_link[0])):
                 links[0].click()
             except Exception as e:
                 print("error : cant find the name " + str(e))    
-        # time.sleep(4)
+        time.sleep(3)
         try:
             sector = driver.find_element_by_xpath('//div[@id="stockName"]/span/strong').text
             print(sector)

@@ -76,7 +76,7 @@ def FillNames(url):
                 url = url[:-1]
                 GoNextPage(NextPage,url)
             else:
-                print("ending loop ")
+                # print("ending loop ")
                 GoNextPage(0)
         except Exception as e:
             print("Cant find page or pages are ended " + str(e))
@@ -86,7 +86,7 @@ def FillNames(url):
 
 def GoNextPage(page,*url):
     if(page == 0):
-        print("no more values found")
+        print("Got all the names from screener")
     else:
         # print(url[0] + "/" + page)
         FillNames(url[0] + "/" + page)

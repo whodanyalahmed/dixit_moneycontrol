@@ -65,7 +65,7 @@ def CheckFileDir(FileName):
         for item in items:
             # print(item['name'])
             if(item['name'] == FileName):
-                print("folder/File is already there")
+                print(FileName + " is already there")
                 # print(item['name'])
                 return item['id']
 def CopyToFolder(folderId,name):
@@ -110,7 +110,7 @@ def DriveProcess(filename,folder,stockId):
         if(IsFileThere == None):
             CopyToFolder(sectorId,Filename)
         else:
-            print("File is already there")
+            print( Filename + " is already there")
         
     except Exception as e:
         print(e)

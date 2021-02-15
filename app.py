@@ -3,10 +3,10 @@ from screen import GatherData
 from spread import updateNSE,GetLinks,UpdateCF,UpdateLink
 from Drive import DriveProcess,CheckFileDir,delete_file,CreateFolder
 from selenium.common.exceptions import TimeoutException
+# from selenium.webdriver.chrome.options import Options
 import time,sys,os
-# import pandas as pd
-# from screen import FillNames,url
 from sys import platform
+
 cur_path = sys.path[0]
 def resource_path(relative_path):
     try:
@@ -21,6 +21,14 @@ if platform == "linux" or platform == "linux2":
     path = resource_path('driver/chromedriver')
 else:
     path = resource_path('driver/chromedriver.exe')
+# chrome_options = Options()
+# chrome_options.add_argument("--disable-extensions")
+# chrome_options.add_argument("--headless")
+# chrome_options.add_argument("--disable-gpu")
+# chrome_options.add_argument("--window-size=1920,1080")
+# chrome_options.add_argument("--no-sandbox") # linux only
+# chrome_options.headless = True # also works
+# driver = webdriver.Chrome()
     # Windows...
 # print("\n\nProcessing.....")
 Replace = input("Do you want to replace files? (y/n) : ")
@@ -29,11 +37,14 @@ if(Replace == "y"):
     Replace_Bool = True
 else:
     Replace_Bool = False
+# driver =webdriver.Chrome(path,options=chrome_options)
 driver =webdriver.Chrome(path)
 def getYear():
-    driver.execute_script("window.scrollTo(0, 700)") 
+    time.sleep(1)
+    driver.execute_script("window.scrollTo(0, 700)")
     return driver.find_element_by_xpath("//div[@id='standalone-new']/div[1]/table/tbody/tr[1]/td[2]")
 def getNextPageUrl():
+    time.sleep(1)
     driver.execute_script("window.scrollTo(0, 700)") 
     url = driver.find_element_by_css_selector('span.nextpaging')
     url  = url.find_element_by_xpath('..').get_attribute('href')
@@ -142,11 +153,12 @@ try:
 except Exception as e:
     print(e)
 companyName_link = GatherData()
-print(len(companyName_link))
-for index in range(len(companyName_link[0])):
+no_of_companies = len(companyName_link[0])
+print(no_of_companies)
+for index in range(no_of_companies):
     # index = 4
     name = companyName_link[0][index]
-    print(name)
+    # print(name)
     try:
         fileId = CheckFileDir(name)
         if(fileId == None):
@@ -156,7 +168,7 @@ for index in range(len(companyName_link[0])):
                 delete_file(fileId)
                 print("success: deleted old file")
             else:
-                pass
+                continue
     except Exception as e:
         print(e)
     try:
@@ -221,6 +233,7 @@ for index in range(len(companyName_link[0])):
             Bs = driver.find_element_by_xpath("//a[@title='Balance Sheet']")
             Bsurl = Bs.get_attribute('href')
             driver.get(Bsurl)
+            time.sleep(5)
             ConOrSta(PagesLink)
             print("success : fetched Balance Sheet")
 
@@ -371,7 +384,7 @@ for index in range(len(companyName_link[0])):
             cf = driver.find_element_by_xpath("//section[@id='cash-flow']/div[2]/table/tbody/tr[3]").text
             cf = str(cf).split(' ')
             cf = cf[3:]
-            print(cf)
+            # print(cf)
         except Exception as e:
             print(e)
 
@@ -385,15 +398,13 @@ for index in range(len(companyName_link[0])):
                 cf.append(e)
         cf_format = []
         cf_format.append(cf)
-        print(cf_format)
+        # print(cf_format)
         try:
             UpdateCF(SpreadsheetId,cf_format)
         except Exception as e:
             print(e)
     except Exception as e:
         print("Something went wrong" + str(e))
-
-
-# print(PagesLink)
+    # print(PagesLink)
 
 print("success : complete")

@@ -142,255 +142,256 @@ try:
 except Exception as e:
     print(e)
 companyName_link = GatherData()
-# for n in range(len(companyName_link)):
-index = 4
-name = companyName_link[0][index]
-print(name)
-try:
-    fileId = CheckFileDir(name)
-    if(fileId == None):
-        pass
-    else:
-        if(Replace_Bool):
-            delete_file(fileId)
-            print("success: deleted old file")
-        else:
+print(len(companyName_link))
+for index in range(len(companyName_link[0])):
+    # index = 4
+    name = companyName_link[0][index]
+    print(name)
+    try:
+        fileId = CheckFileDir(name)
+        if(fileId == None):
             pass
-except Exception as e:
-    print(e)
-try:
-    driver.get("https://www.moneycontrol.com/india/stockpricequote/" + name[0])
-    print("success : Loaded...")
-except TimeoutException as e:
-    print("info : website taking too long to load...stopped")
-    # driver.refresh()
-
-
-# for d in data:    
-nameList = name.split(" ")
-links = []
-PagesLink = []
-try:
-    try:
-        normalName = driver.find_elements_by_partial_link_text(name)
-        # print(len(normalName))
-        normalName[0].click()
+        else:
+            if(Replace_Bool):
+                delete_file(fileId)
+                print("success: deleted old file")
+            else:
+                pass
     except Exception as e:
-        for e in reversed(nameList):
-            # print("in namelist for loop")
-            # link = driver.find_element_by_xpath(f"//*[contains(text(), '" + name.replace(e," ")  +"')]").click()
-            tempname = name.replace(e,"")
-            tempname = tempname.strip().split(" ")
-            nameL = []
-            for c in tempname:
-                n = c.capitalize()
-                n = n.replace(".","")
-                nameL.append(n)
-            tempname = " ".join(nameL) 
-            # print(tempname)
-            try:
-                link = driver.find_element_by_partial_link_text(tempname)
-                links.append(link)
-            # print(links)
-            except Exception as e:
-                print(e)
-            # if(len(links) <= 0 ):
-            #     link = driver.find_element_by_partial_link_text(shortcode)
-            #     links.append(link)    
-    # driver.find_element_by_partial_link_text(name).click()
+        print(e)
+    try:
+        driver.get("https://www.moneycontrol.com/india/stockpricequote/" + name[0])
+        print("success : Loaded...")
+    except TimeoutException as e:
+        print("info : website taking too long to load...stopped")
+        # driver.refresh()
+
+
+    # for d in data:    
+    nameList = name.split(" ")
+    links = []
+    PagesLink = []
+    try:
         try:
-            links[0].click()
+            normalName = driver.find_elements_by_partial_link_text(name)
+            # print(len(normalName))
+            normalName[0].click()
         except Exception as e:
-            print("error : cant find the name " + str(e))    
-    # time.sleep(4)
-    try:
-        sector = driver.find_element_by_xpath('//div[@id="stockName"]/span/strong').text
-        print(sector)
-    except Exception as e:
-        print("error : cant find sector ")
-    HomePage = driver.current_url
-    PagesLink.append(HomePage)
+            for e in reversed(nameList):
+                # print("in namelist for loop")
+                # link = driver.find_element_by_xpath(f"//*[contains(text(), '" + name.replace(e," ")  +"')]").click()
+                tempname = name.replace(e,"")
+                tempname = tempname.strip().split(" ")
+                nameL = []
+                for c in tempname:
+                    n = c.capitalize()
+                    n = n.replace(".","")
+                    nameL.append(n)
+                tempname = " ".join(nameL) 
+                # print(tempname)
+                try:
+                    link = driver.find_element_by_partial_link_text(tempname)
+                    links.append(link)
+                # print(links)
+                except Exception as e:
+                    print(e)
+                # if(len(links) <= 0 ):
+                #     link = driver.find_element_by_partial_link_text(shortcode)
+                #     links.append(link)    
+        # driver.find_element_by_partial_link_text(name).click()
+            try:
+                links[0].click()
+            except Exception as e:
+                print("error : cant find the name " + str(e))    
+        # time.sleep(4)
+        try:
+            sector = driver.find_element_by_xpath('//div[@id="stockName"]/span/strong').text
+            print(sector)
+        except Exception as e:
+            print("error : cant find sector ")
+        HomePage = driver.current_url
+        PagesLink.append(HomePage)
 
-    driver.set_page_load_timeout(50)
-    time.sleep(3)
+        driver.set_page_load_timeout(50)
+        time.sleep(3)
 
-    driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
-    time.sleep(5)
-    try:
-        Bs = driver.find_element_by_xpath("//a[@title='Balance Sheet']")
-        Bsurl = Bs.get_attribute('href')
-        driver.get(Bsurl)
-        ConOrSta(PagesLink)
-        print("success : fetched Balance Sheet")
-
-    except Exception as e:
-        print("error : cant find balance sheet ")
-    try:
-        nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[2]").text
-        if(nse == "" or nse == None):
-            nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
-    except Exception as e:
-        print("info : cant find NSE "+str(e))
-        nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
-    # print(nse)
-    SpreadsheetId = CheckFileDir(name)
-    try: 
-        if(SpreadsheetId == None):
-            print("file is not already there creating one")
-            DriveProcess(name,sector,stockId)
-            SpreadsheetId = CheckFileDir(name)
-        else:
-            print("file is already there")
-    except Exception as e:
-        print(e)
-    Nse_string= str(nse).upper()
-    # print(SpreadsheetId)
-    # print(Nse_string)
-    try:
-
-        updateNSE(Nse_string,SpreadsheetId)
-    except Exception as e:
-        print("error : cant update ")
-        print(e)
-    
-    values = GetLinks(SpreadsheetId)
-    values[0][0] = HomePage
-    def populatePairValues(PairLinks,index1,index2):
-        if(len(PairLinks) == 2):
-            values[index1][0] = PairLinks[0]
-            values[index2][0] = PairLinks[1]
-        elif(len(PairLinks) == 1):
-            values[index1][0] = PairLinks[0]
-            values[index2][0] = None
-        else:
-            values[index1][0] = None
-            values[index2][0] = None
-    try:
-
-        BalanceSheetLinks = Find_links("balance",PagesLink)
-        populatePairValues(BalanceSheetLinks,1,2)
-    except Exception as e:
-        print(e)
-
-    time.sleep(3)
-    try:
-        Pl = driver.find_element_by_xpath("//a[@title='Profit & Loss' and @class='ProfitLoss']")
-        PLurl = Pl.get_attribute('href')
-        driver.get(PLurl)
-        ConOrSta(PagesLink)
-        print("success : fetched Profit and Loss")
-
-    except Exception as e:
-        print("Cant find profit loss or " + str(e))
-    try:
-        ProfitLossLinks = Find_links("profit",PagesLink)
-        populatePairValues(ProfitLossLinks,3,4)
-    except Exception as e:
-        print(e)
-    # Querterly report
-    
-    # time.sleep(3)
-
-    try:
-        Qr = driver.find_element_by_xpath("//a[@title='Quarterly Results' and @class='QuarterlyResults']")
-        Qrurl = Qr.get_attribute('href')
-        driver.get(Qrurl)
-        ConOrSta(PagesLink)
-        print("success : fetched Quarterly Report")
-
-    except Exception as e:
-        print("Cant find Qurarterly report or " + str(e))
-    try:
-        QuarterlyLinks = Find_links("quarterly",PagesLink)
-        populatePairValues(QuarterlyLinks,5,6)
-    except Exception as e:
-        print(e)
-    # cash flow
-    try:
-        Cf = driver.find_element_by_xpath("//a[@title='Cash Flows' and @class='CashFlows']")
-        Cfurl = Cf.get_attribute('href')
-        driver.get(Cfurl)
-        ConOrSta(PagesLink)
-        print("success : fetched Cash Flow")
-
-    except Exception as e:
-        print("Cant find Cash flow or " + str(e))
-    try:
-        CashFlowLinks = Find_links("cash",PagesLink)
-        populatePairValues(CashFlowLinks,7,8)
-    except Exception as e:
-        print(e)
-    # Capital Structure
-    # time.sleep(3)
-    
-    try:
-        Cf = driver.find_element_by_xpath("//a[@title='Capital Structure' and @class='CapitalStructure']")
-        Cfurl = Cf.get_attribute('href')
-        PagesLink.append(Cfurl)
-        print("success : fetched Capital Structure")
-    except Exception as e:
-        print("Cant find Capital Structure or " + str(e))
-
-    def populateSingleValues(PairLinks,index1):
-        if(len(PairLinks) == 1):
-            values[index1][0] = PairLinks[0]
-        else:
-            values[index1][0] = None
-    try:
-        CapitalLinks = Find_links("capital",PagesLink)
-        populateSingleValues(CapitalLinks,9)
-    except Exception as e:
-        print(e)
-    # for screener
-    try:
-        screener_url = "https://www.screener.in" 
-        com = companyName_link[1][index]
-        screener_url = screener_url+com
-        PagesLink.append(screener_url)
-        # print(screener_url)
-    except Exception as e:
-        screener_url = None
-        PagesLink.append(screener_url)
-        print("error : cant get screener url or " + str(e))
-    try:
-        ScreenerLinks = Find_links("screener",PagesLink)
-        populateSingleValues(ScreenerLinks,13)
-    except Exception as e:
-        print(e)
-    print(values)
-    try:
-        UpdateLink(SpreadsheetId,values)
-    except Exception as e:
-        print(e)
-#   CF screener
-    try:
-        driver.get(screener_url)
-        driver.find_element_by_xpath("//section[@id='cash-flow']/div[2]/table/tbody/tr[2]/td[1]/button").click()
+        driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
         time.sleep(5)
-        cf = driver.find_element_by_xpath("//section[@id='cash-flow']/div[2]/table/tbody/tr[3]").text
-        cf = str(cf).split(' ')
-        cf = cf[3:]
-        print(cf)
-    except Exception as e:
-        print(e)
+        try:
+            Bs = driver.find_element_by_xpath("//a[@title='Balance Sheet']")
+            Bsurl = Bs.get_attribute('href')
+            driver.get(Bsurl)
+            ConOrSta(PagesLink)
+            print("success : fetched Balance Sheet")
 
-    if(len(cf) >= 10 ):
-        cf = cf[-10:]
-    else:
-        len_cf = len(cf)
-        remaining = 10-len_cf
-        d_list = [' ']*remaining
-        for e in d_list:
-            cf.append(e)
-    cf_format = []
-    cf_format.append(cf)
-    print(cf_format)
-    try:
-        UpdateCF(SpreadsheetId,cf_format)
+        except Exception as e:
+            print("error : cant find balance sheet ")
+        try:
+            nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[2]").text
+            if(nse == "" or nse == None):
+                nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
+        except Exception as e:
+            print("info : cant find NSE "+str(e))
+            nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
+        # print(nse)
+        SpreadsheetId = CheckFileDir(name)
+        try: 
+            if(SpreadsheetId == None):
+                print("file is not already there creating one")
+                DriveProcess(name,sector,stockId)
+                SpreadsheetId = CheckFileDir(name)
+            else:
+                print("file is already there")
+        except Exception as e:
+            print(e)
+        Nse_string= str(nse).upper()
+        # print(SpreadsheetId)
+        # print(Nse_string)
+        try:
+
+            updateNSE(Nse_string,SpreadsheetId)
+        except Exception as e:
+            print("error : cant update ")
+            print(e)
+        
+        values = GetLinks(SpreadsheetId)
+        values[0][0] = HomePage
+        def populatePairValues(PairLinks,index1,index2):
+            if(len(PairLinks) == 2):
+                values[index1][0] = PairLinks[0]
+                values[index2][0] = PairLinks[1]
+            elif(len(PairLinks) == 1):
+                values[index1][0] = PairLinks[0]
+                values[index2][0] = None
+            else:
+                values[index1][0] = None
+                values[index2][0] = None
+        try:
+
+            BalanceSheetLinks = Find_links("balance",PagesLink)
+            populatePairValues(BalanceSheetLinks,1,2)
+        except Exception as e:
+            print(e)
+
+        time.sleep(3)
+        try:
+            Pl = driver.find_element_by_xpath("//a[@title='Profit & Loss' and @class='ProfitLoss']")
+            PLurl = Pl.get_attribute('href')
+            driver.get(PLurl)
+            ConOrSta(PagesLink)
+            print("success : fetched Profit and Loss")
+
+        except Exception as e:
+            print("Cant find profit loss or " + str(e))
+        try:
+            ProfitLossLinks = Find_links("profit",PagesLink)
+            populatePairValues(ProfitLossLinks,3,4)
+        except Exception as e:
+            print(e)
+        # Querterly report
+        
+        # time.sleep(3)
+
+        try:
+            Qr = driver.find_element_by_xpath("//a[@title='Quarterly Results' and @class='QuarterlyResults']")
+            Qrurl = Qr.get_attribute('href')
+            driver.get(Qrurl)
+            ConOrSta(PagesLink)
+            print("success : fetched Quarterly Report")
+
+        except Exception as e:
+            print("Cant find Qurarterly report or " + str(e))
+        try:
+            QuarterlyLinks = Find_links("quarterly",PagesLink)
+            populatePairValues(QuarterlyLinks,5,6)
+        except Exception as e:
+            print(e)
+        # cash flow
+        try:
+            Cf = driver.find_element_by_xpath("//a[@title='Cash Flows' and @class='CashFlows']")
+            Cfurl = Cf.get_attribute('href')
+            driver.get(Cfurl)
+            ConOrSta(PagesLink)
+            print("success : fetched Cash Flow")
+
+        except Exception as e:
+            print("Cant find Cash flow or " + str(e))
+        try:
+            CashFlowLinks = Find_links("cash",PagesLink)
+            populatePairValues(CashFlowLinks,7,8)
+        except Exception as e:
+            print(e)
+        # Capital Structure
+        # time.sleep(3)
+        
+        try:
+            Cf = driver.find_element_by_xpath("//a[@title='Capital Structure' and @class='CapitalStructure']")
+            Cfurl = Cf.get_attribute('href')
+            PagesLink.append(Cfurl)
+            print("success : fetched Capital Structure")
+        except Exception as e:
+            print("Cant find Capital Structure or " + str(e))
+
+        def populateSingleValues(PairLinks,index1):
+            if(len(PairLinks) == 1):
+                values[index1][0] = PairLinks[0]
+            else:
+                values[index1][0] = None
+        try:
+            CapitalLinks = Find_links("capital",PagesLink)
+            populateSingleValues(CapitalLinks,9)
+        except Exception as e:
+            print(e)
+        # for screener
+        try:
+            screener_url = "https://www.screener.in" 
+            com = companyName_link[1][index]
+            screener_url = screener_url+com
+            PagesLink.append(screener_url)
+            # print(screener_url)
+        except Exception as e:
+            screener_url = None
+            PagesLink.append(screener_url)
+            print("error : cant get screener url or " + str(e))
+        try:
+            ScreenerLinks = Find_links("screener",PagesLink)
+            populateSingleValues(ScreenerLinks,10)
+        except Exception as e:
+            print(e)
+        print(values)
+        try:
+            UpdateLink(SpreadsheetId,values)
+        except Exception as e:
+            print(e)
+    #   CF screener
+        try:
+            driver.get(screener_url)
+            driver.find_element_by_xpath("//section[@id='cash-flow']/div[2]/table/tbody/tr[2]/td[1]/button").click()
+            time.sleep(5)
+            cf = driver.find_element_by_xpath("//section[@id='cash-flow']/div[2]/table/tbody/tr[3]").text
+            cf = str(cf).split(' ')
+            cf = cf[3:]
+            print(cf)
+        except Exception as e:
+            print(e)
+
+        if(len(cf) >= 10 ):
+            cf = cf[-10:]
+        else:
+            len_cf = len(cf)
+            remaining = 10-len_cf
+            d_list = [' ']*remaining
+            for e in d_list:
+                cf.append(e)
+        cf_format = []
+        cf_format.append(cf)
+        print(cf_format)
+        try:
+            UpdateCF(SpreadsheetId,cf_format)
+        except Exception as e:
+            print(e)
     except Exception as e:
-        print(e)
-except Exception as e:
-    print("Something went wrong" + str(e))
+        print("Something went wrong" + str(e))
 
 
 # print(PagesLink)

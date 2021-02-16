@@ -70,11 +70,11 @@ def CheckFileDir(FileName):
                 return item['id']
 def CopyToFolder(folderId,name):
     # Find Bata File
-    BataFile = CheckFileDir("538896")
+    MasterFile = CheckFileDir("Masterfile")
     # Find sector if not then create
     # sector = CreateFolder(folder)
     newfile = {'name': name,'parents' : [ folderId ]}
-    service.files().copy(fileId=BataFile, body=newfile).execute()
+    service.files().copy(fileId=MasterFile, body=newfile).execute()
     print("Success copying file")
 
 def MoveToFolder(folderId,fileId):

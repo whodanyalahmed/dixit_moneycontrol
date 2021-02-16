@@ -45,15 +45,17 @@ def Fill_data(url):
     main.append(urls)
     main.append(full_company)
     # print(full_company)
-    print("len of full company: " + str(len(full_company)))
-    print("len of company: "+ str(len(companies)))
-    print("len of urls: " + str(len(urls)) )
+    # print("len of full company: " + str(len(full_company)))
+    # print("len of company: "+ str(len(companies)))
+    # print("len of urls: " + str(len(urls)) )
+    
+    print("Got all the names from screener")
 
     return main
 
 def GoNextPage(page,*url):
     if(page == 0):
-        print("Got all the names from screener")
+        pass
     else:
         # print(url[0] + "/" + page)
         FillNames(url[0] + "/" + page)

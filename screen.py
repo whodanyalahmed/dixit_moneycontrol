@@ -14,6 +14,7 @@ print("Processing....")
 companies = []
 urls = []
 main= []
+full_company = []
 url = input("Enter screener url: ")
 
 # url= "https://www.screener.in/screens/265380/Good-Solvent-Growth-companies"
@@ -80,14 +81,36 @@ def FillNames(url):
                 GoNextPage(0)
         except Exception as e:
             print("Cant find page or pages are ended " + str(e))
+    # try:
+    #     for e in urls:
+    #         html = requests.get("https://www.screener.in" + e).content
+    #         soup = MakeSoup(html)
+    #         top = soup.findChild("div",{"id":"top"})
+    #         # print(top)
+    #         top_div = MakeSoup(str(top))
+    #         top_div_str = top_div.find_all("div",{'class': 'flex-row'})
+    #         top_h1 = MakeSoup(str(top_div_str))
+    #         ful_com = top_h1.find("h1",{'class':'margin-0'}).text
+    #         # print(ful_com)
+    #         full_company.append(ful_com)
+
+    # except Exception as e:
+    #     print(e)
     main.append(companies)
     main.append(urls)
+    # print(full_company)
+    # main.append(full_company)
+    # print("len of full company: " + str(len(full_company)))
+    print("len of company: "+ str(len(companies)))
+    print("len of urls: " + str(len(urls)) )
+
     return main
 
 def GoNextPage(page,*url):
     if(page == 0):
         print("Got all the names from screener")
     else:
+        print("Again here")
         # print(url[0] + "/" + page)
         FillNames(url[0] + "/" + page)
 

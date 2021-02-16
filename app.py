@@ -192,7 +192,10 @@ for index in range(no_of_companies):
 
             if(name_len > 1):
                 for part_name in range(len(names[1])):
-                    if(part_name == name_len):
+                    if(part_name == len(names[1])):   
+                        normalName = driver.find_elements_by_partial_link_text(name)
+                        # print(len(normalName))
+                        normalName[0].click()
                         break
                     else:
 
@@ -204,10 +207,7 @@ for index in range(no_of_companies):
                             break
                         except Exception as e:
                             pass
-                        
-                normalName = driver.find_elements_by_partial_link_text(name)
-                # print(len(normalName))
-                normalName[0].click()
+
         except Exception as e:
             for e in reversed(nameList):
                 # print("in namelist for loop")

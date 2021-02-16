@@ -186,9 +186,9 @@ for index in range(no_of_companies):
     try:
         try:
             names = name.split(" ")
-            print(names)
+            # print(names)
             name_len = len(names)
-            print(name_len)
+            # print(name_len)
             if(name_len > 1):
                 for part_name in range(len(names[1])):
                     print("Trying on: " + names[0] + " " + names[1][:-part_name-1])
@@ -196,8 +196,9 @@ for index in range(no_of_companies):
                     # print(len(normalName))
                     try:
                         normalName[0].click()
+                        break
                     except Exception as e:
-                        print(e)
+                        # print(e)
                     
             else:
                 normalName = driver.find_elements_by_partial_link_text(name)

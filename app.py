@@ -157,7 +157,7 @@ no_of_companies = len(companyName_link[0])
 print(no_of_companies)
 for index in range(no_of_companies):
     # index = 4
-    name = companyName_link[0][index]
+    name = companyName_link[2][index]
     # print(name)
     try:
         fileId = CheckFileDir(name)
@@ -185,9 +185,19 @@ for index in range(no_of_companies):
     PagesLink = []
     try:
         try:
-            normalName = driver.find_elements_by_partial_link_text(name)
-            # print(len(normalName))
-            normalName[0].click()
+            names = name.split(" ")
+            name_len = len(names)
+            if(name_len > 1):
+                for part_name in range(len(names[1])+1):
+                    print("Trying on: " + names[0] + " " + names[1][:-part_name])
+                    normalName = driver.find_elements_by_partial_link_text(names[0] + " " + names[1][:-part_name])
+                    # print(len(normalName))
+                    normalName[0].click()
+            else:
+                normalName = driver.find_elements_by_partial_link_text(name)
+                # print(len(normalName))
+                normalName[0].click()
+
         except Exception as e:
             for e in reversed(nameList):
                 # print("in namelist for loop")

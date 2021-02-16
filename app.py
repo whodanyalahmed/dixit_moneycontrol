@@ -198,7 +198,7 @@ for index in range(no_of_companies):
                         normalName[0].click()
                         break
                     except Exception as e:
-                        # print(e)
+                        pass
                     
             else:
                 normalName = driver.find_elements_by_partial_link_text(name)

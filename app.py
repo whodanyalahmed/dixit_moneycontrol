@@ -198,15 +198,19 @@ for index in range(no_of_companies):
                         normalName[0].click()
                         break
                     else:
-
-                        print("Trying on: " + names[0] + " " + names[1][:-part_name-1])
-                        normalName = driver.find_elements_by_partial_link_text(names[0] + " " + names[1][:-part_name-1])
-                        # print(len(normalName))
+                        if(names[1][:-part_name-1] == ""):
+                            normalName = driver.find_elements_by_partial_link_text(names[0])
+                            break
+                        else:
+                            print("Trying on: " + names[0] + " " + names[1][:-part_name-1])
+                            normalName = driver.find_elements_by_partial_link_text(names[0] + " " + names[1][:-part_name-1])
+                            # print(len(normalName))
                         try:
+                            print("found the name")
                             normalName[0].click()
                             break
                         except Exception as e:
-                            pass
+                            raise Exception("Cant find the name by this algo.")
 
         except Exception as e:
             for e in reversed(nameList):
@@ -415,7 +419,7 @@ for index in range(no_of_companies):
             remaining = 10-len_cf
             d_list = [' ']*remaining
             for e in d_list:
-                cf.append(e)
+                cf.insert(0,e)
         cf_format = []
         cf_format.append(cf)
         # print(cf_format)

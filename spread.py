@@ -74,11 +74,11 @@ def UpdateLink(Id,values):
     except Exception as e:
         print("error : something went wrong or " + str(e))
 def GetCF(Id):
-    Links_Range = "B21:k21"
+    Links_Range = "k21:B21"
     values = GetExcelValues(Links_Range,Id)
     return values
 def UpdateCF(Id,values):
-    CF_Range = "B21:k21"
+    CF_Range = "k21:B21"
     request = sheet.values().update(spreadsheetId=Id, range=CF_Range, valueInputOption="USER_ENTERED", body={"values" : values})
     try:
         response = request.execute()

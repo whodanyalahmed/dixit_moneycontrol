@@ -2,7 +2,7 @@ from selenium import webdriver
 from screen import GatherData
 from spread import updateNSE,GetLinks,UpdateCF,UpdateLink
 from Drive import DriveProcess,CheckFileDir,delete_file,CreateFolder
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException,NoSuchElementException
 # from selenium.webdriver.chrome.options import Options
 import time,sys,os
 from sys import platform
@@ -112,7 +112,7 @@ def ConOrSta(li):
                 ConsoledatedL.append(None)
 
         except Exception as e:
-            print("info : cant find consoledated years "+str(e))
+            # print("info : cant find consoledated years "+str(e))
             if(len(standAloneL) == 2):
                 for e in standAloneL:
                     ConsoledatedL.append(e)
@@ -193,26 +193,31 @@ for index in range(no_of_companies):
             if(name_len > 1):
                 for part_name in range(len(names[1])):
                     if(part_name == len(names[1])):   
+                        print("In full name")
                         normalName = driver.find_elements_by_partial_link_text(name)
                         # print(len(normalName))
                         normalName[0].click()
-                        break
+                        continue
                     else:
                         if(names[1][:-part_name-1] == ""):
-                            normalName = driver.find_elements_by_partial_link_text(names[0])
-                            break
+                            
+                            print("Trying on: " + names[0].replace(".","") )
+                            driver.find_elements_by_partial_link_text(names[0])[0].click()
+                            continue
                         else:
-                            print("Trying on: " + names[0] + " " + names[1][:-part_name-1])
-                            normalName = driver.find_elements_by_partial_link_text(names[0] + " " + names[1][:-part_name-1])
+                            temp_comName =names[0] + " " + names[1][:-part_name-1] 
+                            print("Trying on: " + temp_comName)
                             # print(len(normalName))
-                        try:
-                            print("found the name")
-                            normalName[0].click()
-                            break
-                        except Exception as e:
-                            raise Exception("Cant find the name by this algo.")
+                            try:
+                                driver.find_elements_by_partial_link_text(temp_comName)[0].click()
+                                print("found element")
+                                break
+                            except Exception as e:
+                                print("Cant find " + temp_comName)
 
-        except Exception as e:
+
+        except Exception as error:
+            print(error)
             for e in reversed(nameList):
                 # print("in namelist for loop")
                 # link = driver.find_element_by_xpath(f"//*[contains(text(), '" + name.replace(e," ")  +"')]").click()

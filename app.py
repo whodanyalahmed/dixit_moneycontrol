@@ -180,7 +180,7 @@ for index in range(no_of_companies):
 
 
     # for d in data:    
-    nameList = name.split(" ")
+    nameList = companyName_link[0][index].split(" ")
     links = []
     PagesLink = []
     try:
@@ -197,10 +197,9 @@ for index in range(no_of_companies):
                         normalName = driver.find_elements_by_partial_link_text(name)
                         # print(len(normalName))
                         normalName[0].click()
-                        continue
+                        break
                     else:
                         if(names[1][:-part_name-1] == ""):
-                            
                             print("Trying on: " + names[0].replace(".","") )
                             driver.find_elements_by_partial_link_text(names[0])[0].click()
                             continue
@@ -259,23 +258,30 @@ for index in range(no_of_companies):
         driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
         time.sleep(5)
         try:
-            Bs = driver.find_element_by_xpath("//a[@title='Balance Sheet']")
-            Bsurl = Bs.get_attribute('href')
-            driver.get(Bsurl)
-            time.sleep(5)
-            ConOrSta(PagesLink)
-            print("success : fetched Balance Sheet")
-
+            def findBalancesheet():
+                Bs = driver.find_element_by_xpath("//a[@title='Balance Sheet']")
+                Bsurl = Bs.get_attribute('href')
+                driver.get(Bsurl)
+                time.sleep(5)
+                ConOrSta(PagesLink)
+                print("success : fetched Balance Sheet")
+            findBalancesheet()
         except Exception as e:
+            driver.refresh()
+            print("Trying again to find Balance Sheet")
+            findBalancesheet()
             print("error : cant find balance sheet ")
-        try:
-            nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[2]").text
-            if(nse == "" or nse == None):
-                nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
-        except Exception as e:
-            print("info : cant find NSE "+str(e))
-            nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
+        # try:
+        #     nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[2]").text
+        #     if(nse == "" or nse == None):
+        #         nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
+        # except Exception as e:
+        #     print("info : cant find NSE "+str(e))
+        #     driver.refresh()
+        #     time.sleep(2)
+        #     nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
         # print(nse)
+        nse = companyName_link[3][index]
         SpreadsheetId = CheckFileDir(name)
         try: 
             if(SpreadsheetId == None):
@@ -317,13 +323,17 @@ for index in range(no_of_companies):
 
         time.sleep(3)
         try:
-            Pl = driver.find_element_by_xpath("//a[@title='Profit & Loss' and @class='ProfitLoss']")
-            PLurl = Pl.get_attribute('href')
-            driver.get(PLurl)
-            ConOrSta(PagesLink)
-            print("success : fetched Profit and Loss")
-
+            def findProfitLoss():
+                Pl = driver.find_element_by_xpath("//a[@title='Profit & Loss' and @class='ProfitLoss']")
+                PLurl = Pl.get_attribute('href')
+                driver.get(PLurl)
+                ConOrSta(PagesLink)
+                print("success : fetched Profit and Loss")
+            findProfitLoss()
         except Exception as e:
+            driver.refresh()
+            print("Trying again to find Profit Loss")
+            findProfitLoss()
             print("Cant find profit loss or " + str(e))
         try:
             ProfitLossLinks = Find_links("profit",PagesLink)
@@ -335,13 +345,17 @@ for index in range(no_of_companies):
         # time.sleep(3)
 
         try:
-            Qr = driver.find_element_by_xpath("//a[@title='Quarterly Results' and @class='QuarterlyResults']")
-            Qrurl = Qr.get_attribute('href')
-            driver.get(Qrurl)
-            ConOrSta(PagesLink)
-            print("success : fetched Quarterly Report")
-
+            def findQuarReport():
+                Qr = driver.find_element_by_xpath("//a[@title='Quarterly Results' and @class='QuarterlyResults']")
+                Qrurl = Qr.get_attribute('href')
+                driver.get(Qrurl)
+                ConOrSta(PagesLink)
+                print("success : fetched Quarterly Report")
+            findQuarReport()
         except Exception as e:
+            driver.refresh()
+            print("Trying again to find Quarterly Report")
+            findQuarReport()
             print("Cant find Qurarterly report or " + str(e))
         try:
             QuarterlyLinks = Find_links("quarterly",PagesLink)
@@ -350,13 +364,17 @@ for index in range(no_of_companies):
             print(e)
         # cash flow
         try:
-            Cf = driver.find_element_by_xpath("//a[@title='Cash Flows' and @class='CashFlows']")
-            Cfurl = Cf.get_attribute('href')
-            driver.get(Cfurl)
-            ConOrSta(PagesLink)
-            print("success : fetched Cash Flow")
-
+            def findCashFlow():
+                Cf = driver.find_element_by_xpath("//a[@title='Cash Flows' and @class='CashFlows']")
+                Cfurl = Cf.get_attribute('href')
+                driver.get(Cfurl)
+                ConOrSta(PagesLink)
+                print("success : fetched Cash Flow")
+            findCashFlow()
         except Exception as e:
+            driver.refresh()
+            print("Trying again to find Cash flow")
+            findCashFlow()
             print("Cant find Cash flow or " + str(e))
         try:
             CashFlowLinks = Find_links("cash",PagesLink)
@@ -367,11 +385,16 @@ for index in range(no_of_companies):
         # time.sleep(3)
         
         try:
-            Cf = driver.find_element_by_xpath("//a[@title='Capital Structure' and @class='CapitalStructure']")
-            Cfurl = Cf.get_attribute('href')
-            PagesLink.append(Cfurl)
-            print("success : fetched Capital Structure")
+            def findCapStructure():
+                Cs = driver.find_element_by_xpath("//a[@title='Capital Structure' and @class='CapitalStructure']")
+                Csurl = Cs.get_attribute('href')
+                PagesLink.append(Csurl)
+                print("success : fetched Capital Structure")
+            findCapStructure()
         except Exception as e:
+            driver.refresh()
+            print("Trying again to find Capital Structure")
+            findCapStructure()
             print("Cant find Capital Structure or " + str(e))
 
         def populateSingleValues(PairLinks,index1):

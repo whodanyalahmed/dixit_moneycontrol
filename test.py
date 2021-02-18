@@ -16,19 +16,13 @@
 #     print(name)
 
 
-
-from spread import GetCF
-cf = ["-1.64","-1.49","-2.2","-0.31","-0.36"]
-if(len(cf) >= 10 ):
-    cf = cf[-10:]
-else:
-    len_cf = len(cf)
-    remaining = 10-len_cf
-    d_list = [' ']*remaining
-    for e in d_list:
-        cf.insert(0,e)
-cf_format = []
-cf_format.append(cf)
-print(cf_format)
 # d = GetCF("1Hhd2acGqabwFKnHfT3YW5qqBAKNBkQKw1FQPoRTb8fM")
 # print(d)
+
+
+
+from screen import Fill_data
+
+
+d = Fill_data("https://www.screener.in/screens/59/Magic-Formula")
+print(d)

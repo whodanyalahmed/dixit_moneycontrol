@@ -16,6 +16,7 @@ urls = []
 main= []
 full_company = []
 url = input("Enter screener url: ")
+bnse = []
 
 # url= "https://www.screener.in/screens/265380/Good-Solvent-Growth-companies"
 # url= "https://www.screener.in/screens/282622/Solvency-Screen/"
@@ -30,21 +31,75 @@ def Fill_data(url):
         for e in urls:
             html = requests.get("https://www.screener.in" + e).content
             soup = MakeSoup(html)
+            # find top
             top = soup.findChild("div",{"id":"top"})
+            # find bse or nse
             # print(top)
+            company_links = soup.find_all("div",{"class":"company-links"})[0]
+            company_soup = MakeSoup(str(company_links))
             top_div = MakeSoup(str(top))
             top_div_str = top_div.find_all("div",{'class': 'flex-row'})
             top_h1 = MakeSoup(str(top_div_str))
             ful_com = top_h1.find("h1",{'class':'margin-0'}).text
             # print(ful_com)
             full_company.append(ful_com)
+            se = company_soup.find_all("span",{"class":['ink-700','upper']})
+            # print(se)
+            if 'NSE' in str(se):
+                    for un in se:
+                        if 'NSE' in un.text:
+                            nse = un.text.split(":")[1]
+                            nse = nse.replace(" ","")
+                            nse = nse.replace("\n","")
+                            bnse.append(nse)
+                            break
+            elif 'BSE' in str(se):
+                for unkown in se:    
+                    if 'BSE' in unkown.text:
+                        bse = unkown.text.split(":")[1]
+                        bse = bse.replace(" ","")
+                        bse = bse.replace("\n","")
+                        bnse.append(bse)
 
+                        break
+            else:
+                print("cant find NSE or BSE")
+                bnse.append(None)
+            # try:
+            #     try:
+            #         for un in se:
+            #             if 'NSE' in un.text:
+            #                 print("found NSE")
+            #                 nse = un.text.split(":")[1]
+            #                 nse = nse.replace(" ","")
+            #                 nse = nse.replace("\n","")
+            #                 bnse.append(nse)
+            #                 print(nse)
+            #     except Exception as err:
+            #         raise Exception("Cant find nse")
+            # except Exception as error:
+            #     print(error)
+            #     for unkown in se:    
+            #         if 'BSE' in unkown.text:
+            #             print("found BSE")
+            #             bse = unkown.text.split(":")[1]
+            #             print(bse)
+            #             bse = bse.replace(" ","")
+            #             bse = bse.replace("\n","")
+            #             bnse.append(bse)
+            #             print(bse)
+            #             break
+            #         else:
+            #             print("cant find NSE or BSE")
+            #             bnse.append(None)
     except Exception as e:
         print(e)
     main.append(companies)
     main.append(urls)
     main.append(full_company)
-    # print(full_company)
+    main.append(bnse)
+    # print(len(bnse))
+    # print(len(full_company))
     # print("len of full company: " + str(len(full_company)))
     # print("len of company: "+ str(len(companies)))
     # print("len of urls: " + str(len(urls)) )

@@ -33,6 +33,7 @@ if not creds or not creds.valid:
 
 service = build('sheets', 'v4', credentials=creds)
 
+logFile = open("log.txt","a+")
 # Call the Sheets API
 
         # for row in values:
@@ -50,8 +51,10 @@ def GetExcelValues(range,Id):
     # print(values)
     if not values:
         print('error : Excel No data found.')
+        logFile.write('error : Excel No data found.')
         return 0
     else:
+        logFile.write('success: Excel Readable found')
         print('success: Excel Readable found')
         return values
 def updateNSE(name,Id):
@@ -60,7 +63,9 @@ def updateNSE(name,Id):
     values[0][0] = name.upper()
     request = sheet.values().update(spreadsheetId=Id, range=Ticker_Range, valueInputOption="USER_ENTERED", body={"values" : values})
     response = request.execute()
+    logFile.write(response)
     print(response)
+    logFile.write(response)
 
 def GetLinks(Id):
     Links_Range = "B8:B18"
@@ -73,6 +78,7 @@ def UpdateLink(Id,values):
         response = request.execute()
     except Exception as e:
         print("error : something went wrong or " + str(e))
+        logFile.write("\nerror : something went wrong or " + str(e))
 def GetCF(Id):
     Links_Range = "k21:B21"
     values = GetExcelValues(Links_Range,Id)
@@ -83,4 +89,5 @@ def UpdateCF(Id,values):
     try:
         response = request.execute()
     except Exception as e:
+        logFile.write("\nerror : something went wrong or " + str(e))
         print("error : something went wrong or " + str(e))

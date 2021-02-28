@@ -9,6 +9,7 @@ def MakeSoup(object):
 
 print("Processing....")
 
+logFile = open("log.txt","a+")
 
 # tb = soup.find_all('table')
 companies = []
@@ -22,6 +23,7 @@ bnse = []
 # url= "https://www.screener.in/screens/282622/Solvency-Screen/"
 # url= "https://www.screener.in/screens/178/Growth-Stocks/"
 # url= "https://www.screener.in/screens/59/Magic-Formula/"
+# https://www.screener.in/screens/330165/Good-Companies-for-Investing/
 c = 0
 # z= 0
 
@@ -64,6 +66,7 @@ def Fill_data(url):
                         break
             else:
                 print("cant find NSE or BSE")
+                logFile.write("\ncant find NSE or BSE")
                 bnse.append(None)
             # try:
             #     try:
@@ -94,6 +97,7 @@ def Fill_data(url):
             #             bnse.append(None)
     except Exception as e:
         print(e)
+        logFile.write("\n"+str(e))
     main.append(companies)
     main.append(urls)
     main.append(full_company)
@@ -104,6 +108,7 @@ def Fill_data(url):
     # print("len of company: "+ str(len(companies)))
     # print("len of urls: " + str(len(urls)) )
     
+    logFile.write("\nGot all the names from screener")
     print("Got all the names from screener")
 
     return main
@@ -153,6 +158,7 @@ def FillNames(url):
             GoNextPage(NextPage,url)
         except Exception as e:
             print("Cant find page or pages are ended " + str(e))
+            logFile.write("\nCant find page or pages are ended " + str(e))
             GoNextPage(0)
 
             # return 0
@@ -175,6 +181,7 @@ def FillNames(url):
                 GoNextPage(0)
         except Exception as e:
             print("Cant find page or pages are ended " + str(e))
+            logFile.write("\nCant find page or pages are ended " + str(e))
 def GatherData():
     d = Fill_data(url)
     return d

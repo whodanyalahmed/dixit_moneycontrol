@@ -57,7 +57,7 @@ def Find_links(name,urls):
     for url in urls:
         # print(url)
         if name in url:
-            logFile.write("\nfound " + name)
+            logFile.write("\nfound " + str(name))
             print("found " + name)
             pair_links.append(url)
     if(len(pair_links) == 0):
@@ -268,7 +268,7 @@ for index in range(no_of_companies):
         time.sleep(3)
         try:
             sector = driver.find_element_by_xpath('//div[@id="stockName"]/span/strong').text
-            logFile.write(sector)
+            logFile.write("\n"+sector)
             print(sector)
         except Exception as e:
             logFile.write("\nerror : cant find sector ")
@@ -474,7 +474,7 @@ for index in range(no_of_companies):
         except Exception as e:
             logFile.write("\n"+str(e))
             print(e)
-        logFile.write(values)
+        logFile.write(str(values))
         print(values)
         try:
             UpdateLink(SpreadsheetId,values)

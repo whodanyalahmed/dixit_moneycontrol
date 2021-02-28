@@ -51,7 +51,7 @@ def CreateFolder(folder,parent=None):
     file = service.files().create(body=body,
                                         fields='id').execute()
     print('Folder ID: %s'% file.get('id'))
-    logFile.write('Folder ID: %s'% file.get('id'))
+    logFile.write('\nFolder ID: %s'% file.get('id'))
     return file.get('id')
     # print(u'{0}'.format(item['name']))
 
@@ -64,7 +64,7 @@ def CheckFileDir(FileName):
     # for i in items:
     #     print(i['name'])
     if not items:
-        logFile.write('No files found.')
+        logFile.write('\nNo files found.')
         print('No files found.')
         return None
     else:
@@ -73,7 +73,7 @@ def CheckFileDir(FileName):
             # print(item['name'])
             if(item['name'] == FileName):
                 print(FileName + " is already there")
-                logFile.write(FileName + " is already there")
+                logFile.write("\n"+FileName + " is already there")
                 # print(item['name'])
                 return item['id']
 def CopyToFolder(folderId,name):
@@ -113,14 +113,14 @@ def CheckFolder(FileName):
     #     print(i['name'])
     if not items:
         print('No files found.')
-        logFile.write('No files found.')
+        logFile.write('\nNo files found.')
         return None
     else:
         # print('Files:')
         for item in items:
             # print(item['name'])
             if(item['name'] == FileName):
-                logFile.write(FileName + " is already there")
+                logFile.write("\n"+FileName + " is already there")
                 print(FileName + " is already there")
                 # print(item['name'])
                 return item['id']
@@ -135,7 +135,7 @@ def delete_file(file_id):
     service.files().delete(fileId=file_id).execute()
   except Exception as e:
     print('An error occurred: %s',e)
-    logFile.write('An error occurred: %s',e)
+    logFile.write('\nAn error occurred: %s',e)
 
 def DriveProcess(filename,folder,stockId):    
     try:
@@ -151,7 +151,7 @@ def DriveProcess(filename,folder,stockId):
         if(IsFileThere == None):
             CopyToFolder(sectorId,Filename)
         else:
-            logFile.write( Filename + " is already there")
+            logFile.write("\n"+ Filename + " is already there")
             print( Filename + " is already there")
         
     except Exception as e:

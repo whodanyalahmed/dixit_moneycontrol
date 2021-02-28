@@ -51,10 +51,10 @@ def GetExcelValues(range,Id):
     # print(values)
     if not values:
         print('error : Excel No data found.')
-        logFile.write('error : Excel No data found.')
+        logFile.write("\nerror : Excel No data found.")
         return 0
     else:
-        logFile.write('success: Excel Readable found')
+        logFile.write("\nsuccess: Excel Readable found")
         print('success: Excel Readable found')
         return values
 def updateNSE(name,Id):
@@ -63,9 +63,8 @@ def updateNSE(name,Id):
     values[0][0] = name.upper()
     request = sheet.values().update(spreadsheetId=Id, range=Ticker_Range, valueInputOption="USER_ENTERED", body={"values" : values})
     response = request.execute()
-    logFile.write(response)
+    logFile.write("\n" +str(response))
     print(response)
-    logFile.write(response)
 
 def GetLinks(Id):
     Links_Range = "B8:B18"

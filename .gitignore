@@ -7,3 +7,4 @@ requirements.txt
 credentials
 application.py
 __pycache__
+log.txt

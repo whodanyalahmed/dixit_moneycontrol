@@ -511,7 +511,7 @@ for index in range(no_of_companies):
             print(e)
             logFile.write("\n"+str(e))
     except Exception as e:
-        logFile.write("\nSomething went wrong" + str(e))
+        logFile.write("\nSomething went wrong " + str(e))
         print("Something went wrong" + str(e))
     # print(PagesLink)
 

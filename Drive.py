@@ -56,13 +56,12 @@ def CreateFolder(folder,parent=None):
     # print(u'{0}'.format(item['name']))
 
 def CheckFileDir(FileName):
-    page_token = None
-    results = service.files().list(q="mimeType = 'application/vnd.google-apps.spreadsheet'",spaces='drive',fields="nextPageToken, files(id, name)",pageToken=page_token).execute()
+    # page_token = None
+    results = service.files().list(q="mimeType = 'application/vnd.google-apps.spreadsheet'",spaces='drive',fields="nextPageToken, files(id, name)",pageSize=400).execute()
     items = results.get('files', [])
 
     # print(len(items))
-    # for i in items:
-    #     print(i['name'])
+    # for i in items:  
     if not items:
         logFile.write('\nNo files found.')
         print('No files found.')
@@ -79,6 +78,7 @@ def CheckFileDir(FileName):
 def CopyToFolder(folderId,name):
     # Find Bata File
     MasterFile = CheckFileDir("Masterfile")
+    print(MasterFile)
     # Find sector if not then create
     # sector = CreateFolder(folder)
     newfile = {'name': name,'parents' : [ folderId ]}

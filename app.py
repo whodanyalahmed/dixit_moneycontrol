@@ -314,7 +314,7 @@ for index in range(no_of_companies):
             if(SpreadsheetId == None):
                 logFile.write("\nfile is not already there creating one")
                 print("file is not already there creating one")
-                DriveProcess(name,sector,stockId)
+                DriveProcess(name,stockId)
                 SpreadsheetId = CheckFileDir(name)
             else:
                 logFile.write("\nfile is already there")

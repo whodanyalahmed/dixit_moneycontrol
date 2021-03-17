@@ -137,19 +137,19 @@ def delete_file(file_id):
     print('An error occurred: %s',e)
     logFile.write('\nAn error occurred: %s',e)
 
-def DriveProcess(filename,folder,stockId):    
+def DriveProcess(filename,stockId):    
     try:
         # Find sector if not then create
         Filename = filename
                 # Find sector if not then create
-        sectorId = CheckFolder(folder)
+        # sectorId = CheckFolder(folder)
         IsFileThere = CheckFileDir(Filename)
-        if(sectorId == None):
-            sectorId = CreateFolder(folder,stockId)
-        else:
-            pass
+        # if(sectorId == None):
+        #     sectorId = CreateFolder(folder,stockId)
+        # else:
+        #     pass
         if(IsFileThere == None):
-            CopyToFolder(sectorId,Filename)
+            CopyToFolder(stockId,Filename)
         else:
             logFile.write("\n"+ Filename + " is already there")
             print( Filename + " is already there")

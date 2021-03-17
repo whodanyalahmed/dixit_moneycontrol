@@ -47,17 +47,17 @@ def Fill_data(url):
             full_company.append(ful_com)
             se = company_soup.find_all("span",{"class":['ink-700','upper']})
             # print(se)
-            if 'NSE' in str(se):
+            if 'BSE' in str(se):
                     for un in se:
-                        if 'NSE' in un.text:
+                        if 'BSE' in un.text:
                             nse = un.text.split(":")[1]
                             nse = nse.replace(" ","")
                             nse = nse.replace("\n","")
                             bnse.append(nse)
                             break
-            elif 'BSE' in str(se):
+            elif 'NSE' in str(se):
                 for unkown in se:    
-                    if 'BSE' in unkown.text:
+                    if 'NSE' in unkown.text:
                         bse = unkown.text.split(":")[1]
                         bse = bse.replace(" ","")
                         bse = bse.replace("\n","")

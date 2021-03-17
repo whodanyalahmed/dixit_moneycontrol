@@ -1,6 +1,7 @@
 from __future__ import print_function
-import pickle,os.path,datetime
-
+from os import name
+import pickle
+import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -36,14 +37,12 @@ sservice = build('sheets', 'v4', credentials=creds)
 sheet = sservice.spreadsheets()
 # def CopyFile(service,"Bata India Ltd"):
 
-logFile = open("IDProgramLog.txt","a+")
-
-logFile.write("\nStarted at: " + str(datetime.datetime.now()))
+logFile = open("Id.txt","a+")
 
 
 def CheckFileDir(FileName):
     # page_token = None
-    results = service.files().list(q="mimeType = 'application/vnd.google-apps.spreadsheet'",spaces='drive',fields="nextPageToken, files(id, name)",pageSize=1000).execute()
+    results = service.files().list(q="mimeType = 'application/vnd.google-apps.spreadsheet'",spaces='drive',fields="nextPageToken, files(id, name)",pageSize=400).execute()
     items = results.get('files', [])
 
     # print(len(items))
@@ -63,7 +62,7 @@ def CheckFileDir(FileName):
                 return item['id']
 
 
-def CopyToFolder(name):
+def CopyToFolder(folderId,name):
     # Find Bata File
     MasterFile = CheckFileDir("Link of Sheet")
     print(MasterFile)
@@ -72,7 +71,7 @@ def CopyToFolder(name):
     # Find sector if not then create
     # sector = CreateFolder(folder)
     if file_id == None:    
-        newfile = {'name': name}
+        newfile = {'name': name,'parents' : [ folderId ]}
         file = service.files().copy(fileId=MasterFile, body=newfile).execute()
         print("Success copying file")
         logFile.write("\nSuccess copying file")
@@ -80,13 +79,13 @@ def CopyToFolder(name):
     else:
         c = 1
         while(True):
-            No_name = name+str(c)
-            print("Trying this name : " +No_name)
-            file_id = CheckFileDir(No_name) 
+            name = name+str(c)
+            print("Trying this name : " +name)
+            file_id = CheckFileDir(name) 
         # Find sector if not then create
         # sector = CreateFolder(folder)
             if file_id == None:    
-                newfile = {'name': No_name}
+                newfile = {'name': name,'parents' : [ folderId ]}
                 file = service.files().copy(fileId=MasterFile, body=newfile).execute()
                 print("Success copying file")
                 logFile.write("\nSuccess copying file")
@@ -94,18 +93,17 @@ def CopyToFolder(name):
             else:
                 c+=1
 
-# def getData(folder_id):
-#     try: 
-#         print("info : wait till program get all the data....")
-#         logFile.write("info : wait till program get all the data....")
-#         results = service.files().list(q="'{}' in parents".format(folder_id),spaces='drive',fields="nextPageToken, files(id, name)",pageSize=400).execute()
-#         items = results.get('files', [])
-#         # print(items)
-#         for item in items:
-#             # print("Name: " + item['name'] + " Id: " +item['id'] )
-#             getExcelIds(item['id'])
-#     except Exception as e:
-#         print(e)
+def getData(folder_id):
+    try: 
+        print("Program seems working")
+        results = service.files().list(q="'{}' in parents".format(folder_id),spaces='drive',fields="nextPageToken, files(id, name)",pageSize=400).execute()
+        items = results.get('files', [])
+        # print(items)
+        for item in items:
+            # print("Name: " + item['name'] + " Id: " +item['id'] )
+            getExcelIds(item['id'])
+    except Exception as e:
+        print(e)
 
 names = []
 ids = []
@@ -115,7 +113,7 @@ def getExcelIds (folder_id):
         items = results.get('files', [])
         # print(items)
         for item in items:
-            print("Name: " + item['name'] + " Id: " +item['id'] )
+            # print("Name: " + item['name'] + " Id: " +item['id'] )
             names.append([item['name']])
             ids.append([item['id']])
     except Exception as e:
@@ -135,28 +133,7 @@ def GetExcelValues(range,Id):
         logFile.write("\nsuccess: Excel Readable found")
         print('success: Excel Readable found')
         return values
-def CheckFolder(FileName):
-    page_token = None
-    # response = service.files().list(q="mimeType = 'application/vnd.google-apps.spreadsheet'",
-    response = service.files().list(q="mimeType = 'application/vnd.google-apps.folder'",
-                                        spaces='drive',
-                                        fields='nextPageToken, files(id, name)',
-                                        pageToken=page_token).execute()
-    items = response.get('files', [])
 
-    if not items:
-        print('No files found.')
-        logFile.write('\nNo files found.')
-        return None
-    else:
-        # print('Files:')
-        for item in items:
-            # print(item['name'])
-            if(item['name'] == FileName):
-                logFile.write("\n"+FileName + " is already there")
-                print(FileName + " is already there")
-                # print(item['name'])
-                return item['id']
 def UpdateValues(Id,values,col):
     start = col+"2"
     num = len(names) + 2
@@ -171,14 +148,14 @@ def UpdateValues(Id,values,col):
         print("error : something went wrong or " + str(e))
         logFile.write("\nerror : something went wrong or " + str(e))
 
-# stocks_id = "1v_8D9Sdtw8B9OLAMdttPCMwQ0nYcTMiW"
-stocks_id = CheckFolder("Stocks")
+# stocks_id = "1DQSTHR2-oCsmHLYZx7lPTcR6Mu7_r9Iv"
+stocks_id = "1v_8D9Sdtw8B9OLAMdttPCMwQ0nYcTMiW"
 # GetNames("1fy0BNWAU64n2pWOQPvoG-BXFI2RqH_2DuwjfjC8Xss0")
-newFileId =  CopyToFolder("FilesDetails")
-# # print(newFileId)
-getExcelIds(stocks_id)
+newFileId =  CopyToFolder(stocks_id,"FilesDetails")
+print(newFileId)
+getData(stocks_id)
 UpdateValues(newFileId,names,"A")
 UpdateValues(newFileId,ids,"B")
-
+# print(len(ids))
 # getExcelIds("Stocks")
-logFile.close()
+logFile.close() 

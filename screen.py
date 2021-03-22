@@ -104,9 +104,10 @@ def Fill_data(url):
     main.append(bnse)
     # print(len(bnse))
     # print(len(full_company))
-    # print("len of full company: " + str(len(full_company)))
-    # print("len of company: "+ str(len(companies)))
-    # print("len of urls: " + str(len(urls)) )
+    print("len of full company: " + str(len(full_company)))
+    print("len of company: "+ str(len(companies)))
+    print("len of urls: " + str(len(urls)) )
+    print("len of BNSE: " + str(len(bnse)) )
     
     logFile.write("\nGot all the names from screener")
     print("Got all the names from screener")

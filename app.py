@@ -4,6 +4,7 @@ from screen import GatherData
 from spread import updateNSE,GetLinks,UpdateCF,UpdateLink
 from Drive import CheckFolder, DriveProcess,CheckFileDir,delete_file,CreateFolder
 from selenium.common.exceptions import TimeoutException,NoSuchElementException
+from selenium.webdriver.common.keys import Keys
 # from selenium.webdriver.chrome.options import Options
 import time,sys,os
 from sys import platform
@@ -198,81 +199,34 @@ for index in range(no_of_companies):
     nameList = companyName_link[0][index].split(" ")
     links = []
     PagesLink = []
+    
+    nse = companyName_link[3][index]
     try:
+        print("Trying BSE of : " + name )
+        logFile.write("\nTrying BSE of : " + name )
         try:
-            names = name.split(" ")
-            # print(names)
-            name_len = len(names)
-            # print(name_len)
-
-            if(name_len > 1):
-                for part_name in range(len(names[1])):
-                    if(part_name == len(names[1])):   
-                        print("In full name")
-                        normalName = driver.find_elements_by_partial_link_text(name)
-                        # print(len(normalName))
-                        normalName[0].click()
-                        break
-                    else:
-                        if(names[1][:-part_name-1] == ""):
-                            logFile.write("\nTrying on: " + names[0].replace(".","") )
-                            print("Trying on: " + names[0].replace(".","") )
-                            driver.find_elements_by_partial_link_text(names[0])[0].click()
-                            continue
-                        else:
-                            temp_comName =names[0] + " " + names[1][:-part_name-1] 
-                            print("Trying on: " + temp_comName)
-                            logFile.write("\nTrying on: " + temp_comName)
-                            # print(len(normalName))
-                            try:
-                                driver.find_elements_by_partial_link_text(temp_comName)[0].click()
-                                logFile.write("\nfound element")
-                                print("found element")
-                                break
-                            except Exception as e:
-                                logFile.write("\nCant find " + temp_comName)
-                                print("Cant find " + temp_comName)
-
-
-        except Exception as error:
-            logFile.write("\n"+str(error))
-            print(error)
-            for e in reversed(nameList):
-                # print("in namelist for loop")
-                # link = driver.find_element_by_xpath(f"//*[contains(text(), '" + name.replace(e," ")  +"')]").click()
-                tempname = name.replace(e,"")
-                tempname = tempname.strip().split(" ")
-                nameL = []
-                for c in tempname:
-                    n = c.capitalize()
-                    n = n.replace(".","")
-                    nameL.append(n)
-                tempname = " ".join(nameL) 
-                # print(tempname)
-                try:
-                    link = driver.find_element_by_partial_link_text(tempname)
-                    links.append(link)
-                # print(links)
-                except Exception as e:
-                    logFile.write("\n"+str(e))
-                    print(e)
-                # if(len(links) <= 0 ):
-                #     link = driver.find_element_by_partial_link_text(shortcode)
-                #     links.append(link)    
-        # driver.find_element_by_partial_link_text(name).click()
+            search_inp = driver.find_element_by_id("search_str")
+            search_inp.send_keys(nse)
+            search_inp.send_keys(Keys.ENTER)
             try:
-                links[0].click()
+                driver.find_element_by_id("proceed-button").click()
+                print("success : clicked send anyway")
+                logFile.write("success : clicked send anyway")
             except Exception as e:
-                logFile.write("\nerror : cant find the name " + str(e))    
-                print("error : cant find the name " + str(e))    
-        time.sleep(3)
-        try:
-            sector = driver.find_element_by_xpath('//div[@id="stockName"]/span/strong').text
-            logFile.write("\n"+sector)
-            print(sector)
-        except Exception as e:
-            logFile.write("\nerror : cant find sector ")
-            print("error : cant find sector ")
+                print(e)
+                logFile.write("\n"+str(e))
+                
+        except Exception as error:
+            print(error+ " cant find: " + nse)
+            logFile.write("\n"+str(error) + "cant find: " + nse)
+        # time.sleep(3)
+        # try:
+        #     sector = driver.find_element_by_xpath('//div[@id="stockName"]/span/strong').text
+        #     logFile.write("\n"+sector)
+        #     print(sector)
+        # except Exception as e:
+        #     logFile.write("\nerror : cant find sector ")
+        #     print("error : cant find sector ")
         HomePage = driver.current_url
         PagesLink.append(HomePage)
 
@@ -280,7 +234,7 @@ for index in range(no_of_companies):
         time.sleep(3)
 
         driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
-        time.sleep(5)
+        time.sleep(3)
         try:
             def findBalancesheet():
                 Bs = driver.find_element_by_xpath("//a[@title='Balance Sheet']")
@@ -308,7 +262,6 @@ for index in range(no_of_companies):
         #     time.sleep(2)
         #     nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
         # print(nse)
-        nse = companyName_link[3][index]
         SpreadsheetId = CheckFileDir(name)
         try: 
             if(SpreadsheetId == None):

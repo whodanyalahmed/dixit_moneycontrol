@@ -187,8 +187,8 @@ def GatherData():
     d = Fill_data(url)
     return d
 
-# d = FillNames(url)
-# print(len(d[0]))
+# d = Fill_data(url)
+# print(d[1])
 # print(len(d[1]))
 
 # for e in range(len(companies)):

@@ -64,7 +64,7 @@ def Find_links(name,urls):
     if(len(pair_links) == 0):
         pair_links = [None,None]
     return pair_links
-def ConOrSta(li):
+def ConOrSta(li,url):
         standAloneL = []
         ConsoledatedL = []
         di = {}
@@ -132,7 +132,12 @@ def ConOrSta(li):
         # print(int(di['consoledated']))
         # print(int(di['standalone']))\
         try:
-            if(int(di['consoledated']) < int(di['standalone'])):
+            if 'consolidated' in url:
+                print("info : consolidated link")
+                logFile.write("\ninfo : consolidated link")
+                for d in ConsoledatedL:
+                    li.append(d)
+            elif(int(di['consoledated']) < int(di['standalone'])):
                 # print("standalone")
                 for d in standAloneL:
                     li.append(d)
@@ -147,7 +152,7 @@ def ConOrSta(li):
 driver.maximize_window()
 # open link
 # driver.set_page_load_timeout(120)
-driver.set_page_load_timeout(30)
+# driver.set_page_load_timeout(30)
 
 # data = pd.read_csv("Equity.csv")
 # data = data['Security Id'] 
@@ -164,12 +169,16 @@ except Exception as e:
     print(e)
 companyName_link = GatherData()
 no_of_companies = len(companyName_link[0])
+
 logFile.write(str(no_of_companies))
 print(no_of_companies)
 for index in range(no_of_companies):
     # index = 4
     name = companyName_link[2][index]
     # print(name)
+    screener_url = "https://www.screener.in" 
+    com = companyName_link[1][index]
+    screener_url = screener_url+com
     try:
         fileId = CheckFileDir(name)
         if(fileId == None):
@@ -241,7 +250,7 @@ for index in range(no_of_companies):
                 Bsurl = Bs.get_attribute('href')
                 driver.get(Bsurl)
                 time.sleep(5)
-                ConOrSta(PagesLink)
+                ConOrSta(PagesLink,screener_url)
                 logFile.write("\nsuccess : fetched Balance Sheet")
                 print("success : fetched Balance Sheet")
             findBalancesheet()
@@ -313,7 +322,7 @@ for index in range(no_of_companies):
                 Pl = driver.find_element_by_xpath("//a[@title='Profit & Loss' and @class='ProfitLoss']")
                 PLurl = Pl.get_attribute('href')
                 driver.get(PLurl)
-                ConOrSta(PagesLink)
+                ConOrSta(PagesLink,screener_url)
                 logFile.write("\nsuccess : fetched Profit and Loss")
                 print("success : fetched Profit and Loss")
             findProfitLoss()
@@ -339,7 +348,7 @@ for index in range(no_of_companies):
                 Qr = driver.find_element_by_xpath("//a[@title='Quarterly Results' and @class='QuarterlyResults']")
                 Qrurl = Qr.get_attribute('href')
                 driver.get(Qrurl)
-                ConOrSta(PagesLink)
+                ConOrSta(PagesLink,screener_url)
                 logFile.write("\nsuccess : fetched Quarterly Report")
                 print("success : fetched Quarterly Report")
             findQuarReport()
@@ -362,7 +371,7 @@ for index in range(no_of_companies):
                 Cf = driver.find_element_by_xpath("//a[@title='Cash Flows' and @class='CashFlows']")
                 Cfurl = Cf.get_attribute('href')
                 driver.get(Cfurl)
-                ConOrSta(PagesLink)
+                ConOrSta(PagesLink,screener_url)
                 logFile.write("\nsuccess : fetched Cash Flow")
                 print("success : fetched Cash Flow")
             findCashFlow()
@@ -411,9 +420,7 @@ for index in range(no_of_companies):
             print(e)
         # for screener
         try:
-            screener_url = "https://www.screener.in" 
-            com = companyName_link[1][index]
-            screener_url = screener_url+com
+
             PagesLink.append(screener_url)
             # print(screener_url)
         except Exception as e:

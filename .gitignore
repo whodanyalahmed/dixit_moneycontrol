@@ -1,0 +1,15 @@
+driver
+test
+client_id.json
+client_secret.json
+token.pickle
+requirements.txt
+credentials
+application.py
+__pycache__
+log.txt
+Oldapp.py
+OldGoogle.py
+test.py
+newScreen.py
+moneycontrol.zip

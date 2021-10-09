@@ -158,14 +158,14 @@ def Fill_data(url):
                         bse = bse.replace(" ","")
                         bse = bse.replace("\n","")
                         bnse.append(bse)
-                        print(bse)
+                        # print(bse)
                         break
                     else:
                         print("cant find NSE or BSE")
                         bnse.append(None)
             global z
-            print(e)
-            print(z)
+            # print(e)
+            # print(z)
             z+=1
 
     except Exception as e:

@@ -66,12 +66,12 @@ def updateNSE(name,Id):
     logFile.write("\n" +str(response))
     print(response)
 
-def GetLink(Id):
-    Links_Range = "B8"
+def GetLink(Id,Links_Range):
+    # Links_Range = "B8"
     values = GetExcelValues(Links_Range,Id)
     return values
-def UpdateSingleLink(Id,values):
-    Links_Range = "B8"
+def UpdateSingleLink(Id,values,Links_Range):
+    # Links_Range = "B8"
     request = sheet.values().update(spreadsheetId=Id, range=Links_Range, valueInputOption="USER_ENTERED", body={"values" : values})
     try:
         response = request.execute()

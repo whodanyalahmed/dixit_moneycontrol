@@ -297,8 +297,8 @@ for index in range(no_of_companies):
             logFile.write("\n"+str(e))
             print("error : cant update ")
             print(e)
-        
-        values = GetLink(SpreadsheetId)
+        ScreenerLinkValue = GetLink(SpreadsheetId,'B18') 
+        values = GetLink(SpreadsheetId,'B8')
         values[0][0] = HomePage
         # def populatePairValues(PairLinks,index1,index2):
         #     if(len(PairLinks) == 2):
@@ -414,32 +414,35 @@ for index in range(no_of_companies):
                 values[index1][0] = PairLinks[0]
             else:
                 values[index1][0] = None
-        try:
-            CapitalLinks = Find_links("capital",PagesLink)
-            populateSingleValues(CapitalLinks,9)
-        except Exception as e:
-            logFile.write("\n"+str(e))
-            print(e)
+        # try:
+        #     CapitalLinks = Find_links("capital",PagesLink)
+        #     populateSingleValues(CapitalLinks,9)
+        # except Exception as e:
+        #     logFile.write("\n"+str(e))
+        #     print(e)
         # # for screener
         try:
 
             PagesLink.append(screener_url)
-            # print(screener_url)
+            ScreenerLinkValue[0][0] = screener_url
+            # print('screener url : ' + screener_url)
         except Exception as e:
             screener_url = None
             PagesLink.append(screener_url)
             logFile.write("\nerror : cant get screener url or " + str(e))
             print("error : cant get screener url or " + str(e))
-        try:
-            ScreenerLinks = Find_links("screener",PagesLink)
-            populateSingleValues(ScreenerLinks,10)
-        except Exception as e:
-            logFile.write("\n"+str(e))
-            print(e)
+        # try:
+        #     ScreenerLinks = Find_links("screener",PagesLink)
+        #     populateSingleValues(ScreenerLinks,10)
+        # except Exception as e:
+        #     logFile.write("\n"+str(e))
+        #     print(e)
         logFile.write(str(values))
         print(values)
         try:
-            UpdateSingleLink(SpreadsheetId,values)
+            UpdateSingleLink(SpreadsheetId,values,'B8')
+            UpdateSingleLink(SpreadsheetId,ScreenerLinkValue,'B18')
+
         except Exception as e:
             print(e)
             logFile.write("\n"+str(e))

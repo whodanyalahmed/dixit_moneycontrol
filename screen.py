@@ -107,62 +107,63 @@ def Fill_data(url):
             full_company.append(ful_com)
             se = company_soup.find_all("span",{"class":['ink-700','upper']})
             # print(se)
-            # if 'BSE' in str(se):
-            #     for un in se:
-            #         if 'BSE' in un.text:
-            #             print('in bse')
-            #             nse = un.text.split(":")[1]
-            #             nse = nse.replace(" ","")
-            #             nse = nse.replace("\n","")
-            #             bnse.append(nse)
-            #             break
-            # elif 'NSE' in str(se):
-            #     for unkown in se:    
-            #         if 'NSE' in unkown.text:
-            #             print("in NSE")
-            #             bse = unkown.text.split(":")[1]
-            #             bse = bse.replace(" ","")
-            #             bse = bse.replace("\n","")
-            #             bnse.append(bse)
-
-            #             break
-            # else:
-            #     print("cant find NSE or BSE")
-            #     logFile.write("\ncant find NSE or BSE")
-            #     bnse.append(None)
-            try:
-                try:
-                    for un in se:
-                        if 'BSE' in un.text:
-                            # print("found BSE")
-                            try:
-                                nse = un.text.split(":")[1]
-                            except Exception as e:
-                                print("exception in BSE")
-                            nse = nse.replace(" ","")
-                            nse = nse.replace("\n","")
-                            bnse.append(nse)
-                            print(nse)
-                except Exception as err:
-                    raise Exception("Cant find BSE")
-            except Exception as error:
-                print(error)
+            if 'BSE' in str(se):
+                for un in se:
+                    if 'BSE' in un.text:
+                        print('in bse')
+                        nse = un.text.split(":")[1]
+                        nse = nse.replace(" ","")
+                        nse = nse.replace("\n","")
+                        bnse.append(nse)
+                        print(nse)
+                        break
+            elif 'NSE' in str(se):
                 for unkown in se:    
                     if 'NSE' in unkown.text:
-                        print("found NSE")
-                        try:
-                            bse = unkown.text.split(":")[1]
-                        except Exception as e:
-                                print("exception in NSE")
-                        # print(bse)
+                        print("in NSE")
+                        bse = unkown.text.split(":")[1]
                         bse = bse.replace(" ","")
                         bse = bse.replace("\n","")
                         bnse.append(bse)
-                        # print(bse)
+                        print(bse)
                         break
-                    else:
-                        print("cant find NSE or BSE")
-                        bnse.append(None)
+            else:
+                print("cant find NSE or BSE")
+                logFile.write("\ncant find NSE or BSE")
+                bnse.append(None)
+            # try:
+            #     try:
+            #         for un in se:
+            #             if 'BSE' in un.text:
+            #                 # print("found BSE")
+            #                 try:
+            #                     nse = un.text.split(":")[1]
+            #                 except Exception as e:
+            #                     print("exception in BSE")
+            #                 nse = nse.replace(" ","")
+            #                 nse = nse.replace("\n","")
+            #                 bnse.append(nse)
+            #                 print(nse)
+            #     except Exception as err:
+            #         raise Exception("Cant find BSE")
+            # except Exception as error:
+            #     print(error)
+            #     for unkown in se:    
+            #         if 'NSE' in unkown.text:
+            #             print("found NSE")
+            #             try:
+            #                 bse = unkown.text.split(":")[1]
+            #             except Exception as e:
+            #                     print("exception in NSE")
+            #             # print(bse)
+            #             bse = bse.replace(" ","")
+            #             bse = bse.replace("\n","")
+            #             bnse.append(bse)
+            #             # print(bse)
+            #             break
+            #         else:
+            #             print("cant find NSE or BSE")
+            #             bnse.append(None)
             global z
             # print(e)
             # print(z)

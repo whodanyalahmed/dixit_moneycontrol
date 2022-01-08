@@ -1,16 +1,20 @@
 import datetime
 from selenium import webdriver
 from screen import GatherData
-from spread import updateNSE,GetLink,UpdateCF,UpdateSingleLink
-from Drive import CheckFolder, DriveProcess,CheckFileDir,delete_file,CreateFolder
-from selenium.common.exceptions import TimeoutException,NoSuchElementException
+from spread import updateNSE, GetLink, UpdateCF, UpdateSingleLink
+from Drive import CheckFolder, DriveProcess, CheckFileDir, delete_file, CreateFolder
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 # from selenium.webdriver.chrome.options import Options
-import time,sys,os
+import time
+import sys
+import os
 from sys import platform
-logFile = open("log.txt","a+")
+logFile = open("log.txt", "a+")
 logFile.write("\nStarted at: " + str(datetime.datetime.now()))
 cur_path = sys.path[0]
+
+
 def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
@@ -23,7 +27,9 @@ if platform == "linux" or platform == "linux2":
     # linux
     path = resource_path('driver/chromedriver')
 else:
-    path = resource_path('driver/chromedriver.exe')
+
+    # path = resource_path('driver/chromedriver.exe')
+    path = resource_path('i://clients/chromedriver.exe')
 # chrome_options = Options()
 # chrome_options.add_argument("--disable-extensions")
 # chrome_options.add_argument("--headless")
@@ -41,19 +47,24 @@ if(Replace == "y"):
 else:
     Replace_Bool = False
 # driver =webdriver.Chrome(path,options=chrome_options)
-driver =webdriver.Chrome(path)
+driver = webdriver.Chrome(path)
+
 
 def getYear():
     time.sleep(1)
     driver.execute_script("window.scrollTo(0, 700)")
     return driver.find_element_by_xpath("//div[@id='standalone-new']/div[1]/table/tbody/tr[1]/td[2]")
+
+
 def getNextPageUrl():
     time.sleep(1)
-    driver.execute_script("window.scrollTo(0, 700)") 
+    driver.execute_script("window.scrollTo(0, 700)")
     url = driver.find_element_by_css_selector('span.nextpaging')
-    url  = url.find_element_by_xpath('..').get_attribute('href')
+    url = url.find_element_by_xpath('..').get_attribute('href')
     return url
-def Find_links(name,urls):
+
+
+def Find_links(name, urls):
     pair_links = []
     for url in urls:
         # print(url)
@@ -62,102 +73,105 @@ def Find_links(name,urls):
             print("found " + name)
             pair_links.append(url)
     if(len(pair_links) == 0):
-        pair_links = [None,None]
+        pair_links = [None, None]
     return pair_links
-def ConOrSta(li,url):
-        standAloneL = []
-        ConsoledatedL = []
-        di = {}
-        try:
-            standAlone = getYear()
-            standAloneYear_url = driver.current_url
-            standAloneL.append(standAloneYear_url)
-            try:
-                # print("info : Comma one...")
-                di['standalone'] = standAlone.text.split("'")[1]
-            except Exception as e:
-                di['standalone'] = standAlone.text.split(" ")[1]
-            # print(di['standalone'] + " and waiting")
-            # time.sleep(10)
-            # standAlone_url2 = driver.find_element_by_xpath("//ul[@class='pagination']")
-            try:
-                standAloneYear_url2 = getNextPageUrl()
-                standAloneL.append(standAloneYear_url2)
-            except Exception as e:
-                logFile.write("\nerror : cant find next page or " + str(e))
-                print("error : cant find next page or " + str(e))
-                standAloneL.append(None)
 
-        except Exception as e:
-            logFile.write("\nerror : cant find standalone years "+str(e))
-            print("error : cant find standalone years "+str(e))
-            standAloneL.append(None)
-            standAloneL.append(None)
-        
-        try:
-            driver.find_element_by_id("#consolidated").click()
-        except Exception as e:
-            logFile.write("\nerror : cant find consoledated link "+str(e))
-            print("error : cant find consoledated link "+str(e))
-        
-        try:
-            Consoledated = getYear()
-            Consoledated_url = driver.current_url
-            ConsoledatedL.append(Consoledated_url)
-            try:
-                # print("info : Comma one...")
-                di['consoledated']  = Consoledated.text.split("'")[1]
-            except Exception as e:
-                di['consoledated']  = Consoledated.text.split(" ")[1]
-            # print(di['consoledated'] + " and waiting")
-            # time.sleep(10)
-            # consoledated_url2 = driver.find_element_by_xpath("//ul[@class='pagination']/")
-            try:
-                consoledated_url2 = getNextPageUrl()
-                ConsoledatedL.append(consoledated_url2)
-            except Exception as e:
-                logFile.write("\nerror : cant find next page or " + str(e))
-                print("error : cant find next page or " + str(e))
-                ConsoledatedL.append(None)
 
-        except Exception as e:
-            # print("info : cant find consoledated years "+str(e))
-            if(len(standAloneL) == 2):
-                for e in standAloneL:
-                    ConsoledatedL.append(e)
-            else:
-                ConsoledatedL.append(None)
-                ConsoledatedL.append(None)
-        # print(type(di['consoledated']))
-        # print(int(di['consoledated']))
-        # print(int(di['standalone']))\
+def ConOrSta(li, url):
+    standAloneL = []
+    ConsoledatedL = []
+    di = {}
+    try:
+        standAlone = getYear()
+        standAloneYear_url = driver.current_url
+        standAloneL.append(standAloneYear_url)
         try:
-            if 'consolidated' in url:
-                print("info : consolidated link")
-                logFile.write("\ninfo : consolidated link")
-                for d in ConsoledatedL:
-                    li.append(d)
-            # elif(int(di['consoledated']) < int(di['standalone'])):
-            #     # print("standalone")
-            #     for d in standAloneL:
-            #         li.append(d)
-            else:
-                print("info : Standalone link")
-                logFile.write("\ninfo : Standalone link")
-                for d in standAloneL:
-                    li.append(d)
+            # print("info : Comma one...")
+            di['standalone'] = standAlone.text.split("'")[1]
         except Exception as e:
-            # print("consoledated")
+            di['standalone'] = standAlone.text.split(" ")[1]
+        # print(di['standalone'] + " and waiting")
+        # time.sleep(10)
+        # standAlone_url2 = driver.find_element_by_xpath("//ul[@class='pagination']")
+        try:
+            standAloneYear_url2 = getNextPageUrl()
+            standAloneL.append(standAloneYear_url2)
+        except Exception as e:
+            logFile.write("\nerror : cant find next page or " + str(e))
+            print("error : cant find next page or " + str(e))
+            standAloneL.append(None)
+
+    except Exception as e:
+        logFile.write("\nerror : cant find standalone years "+str(e))
+        print("error : cant find standalone years "+str(e))
+        standAloneL.append(None)
+        standAloneL.append(None)
+
+    try:
+        driver.find_element_by_id("#consolidated").click()
+    except Exception as e:
+        logFile.write("\nerror : cant find consoledated link "+str(e))
+        print("error : cant find consoledated link "+str(e))
+
+    try:
+        Consoledated = getYear()
+        Consoledated_url = driver.current_url
+        ConsoledatedL.append(Consoledated_url)
+        try:
+            # print("info : Comma one...")
+            di['consoledated'] = Consoledated.text.split("'")[1]
+        except Exception as e:
+            di['consoledated'] = Consoledated.text.split(" ")[1]
+        # print(di['consoledated'] + " and waiting")
+        # time.sleep(10)
+        # consoledated_url2 = driver.find_element_by_xpath("//ul[@class='pagination']/")
+        try:
+            consoledated_url2 = getNextPageUrl()
+            ConsoledatedL.append(consoledated_url2)
+        except Exception as e:
+            logFile.write("\nerror : cant find next page or " + str(e))
+            print("error : cant find next page or " + str(e))
+            ConsoledatedL.append(None)
+
+    except Exception as e:
+        # print("info : cant find consoledated years "+str(e))
+        if(len(standAloneL) == 2):
+            for e in standAloneL:
+                ConsoledatedL.append(e)
+        else:
+            ConsoledatedL.append(None)
+            ConsoledatedL.append(None)
+    # print(type(di['consoledated']))
+    # print(int(di['consoledated']))
+    # print(int(di['standalone']))\
+    try:
+        if 'consolidated' in url:
+            print("info : consolidated link")
+            logFile.write("\ninfo : consolidated link")
             for d in ConsoledatedL:
-                    li.append(d)
-            
+                li.append(d)
+        # elif(int(di['consoledated']) < int(di['standalone'])):
+        #     # print("standalone")
+        #     for d in standAloneL:
+        #         li.append(d)
+        else:
+            print("info : Standalone link")
+            logFile.write("\ninfo : Standalone link")
+            for d in standAloneL:
+                li.append(d)
+    except Exception as e:
+        # print("consoledated")
+        for d in ConsoledatedL:
+            li.append(d)
+
+
 driver.maximize_window()
 # open link
 # driver.set_page_load_timeout(120)
 # driver.set_page_load_timeout(30)
 
 # data = pd.read_csv("Equity.csv")
-# data = data['Security Id'] 
+# data = data['Security Id']
 # shortcode = "HDFC"
 
 try:
@@ -178,7 +192,11 @@ for index in range(no_of_companies):
     # index = 4
     name = companyName_link[2][index]
     print(name)
-    screener_url = "https://www.screener.in" 
+    screener_url = "https://www.screener.in"
+    cur_url = ""
+    
+    nse = companyName_link[3][index]
+    error_url = "https://www.moneycontrol.com/stocks/cptmarket/compsearchnew.php?search_data=&cid=&mbsearch_str=&topsearch_type=1&search_str="+nse
     com = companyName_link[1][index]
     screener_url = screener_url+com
     try:
@@ -197,7 +215,9 @@ for index in range(no_of_companies):
         logFile.write("\n"+str(e))
         print(e)
     try:
-        driver.get("https://www.moneycontrol.com/india/stockpricequote/" + name[0])
+        cur_url = "https://www.moneycontrol.com/india/stockpricequote/" + name[0]
+        driver.get(cur_url)
+
         logFile.write("\nsuccess : Loaded...")
         print("success : Loaded...")
     except TimeoutException as e:
@@ -205,16 +225,14 @@ for index in range(no_of_companies):
         print("info : website taking too long to load...stopped")
         # driver.refresh()
 
-
-    # for d in data:    
+    # for d in data:
     nameList = companyName_link[0][index].split(" ")
     links = []
     PagesLink = []
-    
-    nse = companyName_link[3][index]
+
     try:
-        print("Trying BSE of : " + name )
-        logFile.write("\nTrying BSE of : " + name )
+        print("Trying BSE of : " + name)
+        logFile.write("\nTrying BSE of : " + name)
         try:
             search_inp = driver.find_element_by_id("search_str")
             search_inp.send_keys(nse)
@@ -226,9 +244,13 @@ for index in range(no_of_companies):
             except Exception as e:
                 print(e)
                 logFile.write("\n"+str(e))
-                
+
+            if(driver.current_url == cur_url or driver.current_url == error_url):
+                print("info : no results")
+                logFile.write("\ninfo : no results")
+                continue
         except Exception as error:
-            print(error+ " cant find: " + nse)
+            print(error + " cant find: " + nse)
             logFile.write("\n"+str(error) + "cant find: " + nse)
         # time.sleep(3)
         # try:
@@ -274,11 +296,11 @@ for index in range(no_of_companies):
         # #     nse = driver.find_element_by_xpath("//p[contains(@class, 'bsns_pcst ') and contains(@class, 'disin')]/ctag/span[1]").text
         # # print(nse)
         SpreadsheetId = CheckFileDir(name)
-        try: 
+        try:
             if(SpreadsheetId == None):
                 logFile.write("\nfile is not already there creating one")
                 print("file is not already there creating one")
-                DriveProcess(name,stockId)
+                DriveProcess(name, stockId)
                 SpreadsheetId = CheckFileDir(name)
             else:
                 logFile.write("\nfile is already there")
@@ -286,19 +308,19 @@ for index in range(no_of_companies):
         except Exception as e:
             logFile.write("\n"+str(e))
             print(e)
-        Nse_string= str(nse).upper()
+        Nse_string = str(nse).upper()
         # print(SpreadsheetId)
         # print(Nse_string)
         try:
 
-            updateNSE(Nse_string,SpreadsheetId)
+            updateNSE(Nse_string, SpreadsheetId)
         except Exception as e:
             logFile.write("\nerror : cant update ")
             logFile.write("\n"+str(e))
             print("error : cant update ")
             print(e)
-        ScreenerLinkValue = GetLink(SpreadsheetId,'B18') 
-        values = GetLink(SpreadsheetId,'B8')
+        ScreenerLinkValue = GetLink(SpreadsheetId, 'B18')
+        values = GetLink(SpreadsheetId, 'B8')
         values[0][0] = HomePage
         # def populatePairValues(PairLinks,index1,index2):
         #     if(len(PairLinks) == 2):
@@ -342,7 +364,7 @@ for index in range(no_of_companies):
         #     logFile.write("\n"+str(e))
         #     print(e)
         # # Querterly report
-        
+
         # # time.sleep(3)
 
         # try:
@@ -392,7 +414,7 @@ for index in range(no_of_companies):
         #     print(e)
         # # Capital Structure
         # # time.sleep(3)
-        
+
         # try:
         #     def findCapStructure():
         #         Cs = driver.find_element_by_xpath("//a[@title='Capital Structure' and @class='CapitalStructure']")
@@ -409,7 +431,7 @@ for index in range(no_of_companies):
         #     logFile.write("\nCant find Capital Structure or " + str(e))
         #     print("Cant find Capital Structure or " + str(e))
 
-        def populateSingleValues(PairLinks,index1):
+        def populateSingleValues(PairLinks, index1):
             if(len(PairLinks) == 1):
                 values[index1][0] = PairLinks[0]
             else:
@@ -440,8 +462,8 @@ for index in range(no_of_companies):
         logFile.write(str(values))
         print(values)
         try:
-            UpdateSingleLink(SpreadsheetId,values,'B8')
-            UpdateSingleLink(SpreadsheetId,ScreenerLinkValue,'B18')
+            UpdateSingleLink(SpreadsheetId, values, 'B8')
+            UpdateSingleLink(SpreadsheetId, ScreenerLinkValue, 'B18')
 
         except Exception as e:
             print(e)
@@ -449,9 +471,11 @@ for index in range(no_of_companies):
     #   CF screener
         try:
             driver.get(screener_url)
-            driver.find_element_by_xpath("//section[@id='cash-flow']/div[2]/table/tbody/tr[2]/td[1]/button").click()
+            driver.find_element_by_xpath(
+                "//section[@id='cash-flow']/div[2]/table/tbody/tr[2]/td[1]/button").click()
             time.sleep(5)
-            cf = driver.find_element_by_xpath("//section[@id='cash-flow']/div[2]/table/tbody/tr[3]").text
+            cf = driver.find_element_by_xpath(
+                "//section[@id='cash-flow']/div[2]/table/tbody/tr[3]").text
             cf = str(cf).split(' ')
             cf = cf[3:]
             # print(cf)
@@ -459,19 +483,19 @@ for index in range(no_of_companies):
             logFile.write("\n"+str(e))
             print(e)
 
-        if(len(cf) >= 10 ):
+        if(len(cf) >= 10):
             cf = cf[-10:]
         else:
             len_cf = len(cf)
             remaining = 10-len_cf
             d_list = [' ']*remaining
             for e in d_list:
-                cf.insert(0,e)
+                cf.insert(0, e)
         cf_format = []
         cf_format.append(cf)
         # print(cf_format)
         try:
-            UpdateCF(SpreadsheetId,cf_format)
+            UpdateCF(SpreadsheetId, cf_format)
         except Exception as e:
             print(e)
             logFile.write("\n"+str(e))

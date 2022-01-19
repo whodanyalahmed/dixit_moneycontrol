@@ -61,7 +61,7 @@ def GetExcelValues(range, Id):
         return values
 
 
-def updateSingleValue(name, Id, range):
+def updateSingleValue(name, Id, Ticker_Range):
     # Ticker_Range = 'B3'
     values = GetExcelValues(Ticker_Range, Id)
     values[0][0] = name.upper()
@@ -69,7 +69,7 @@ def updateSingleValue(name, Id, range):
                                     valueInputOption="USER_ENTERED", body={"values": values})
     response = request.execute()
     logFile.write("\n" + str(response))
-    print(response)
+    print("sucess: updated cell " + Ticker_Range + " with " + name.upper())
 
 
 def GetLink(Id, Links_Range):

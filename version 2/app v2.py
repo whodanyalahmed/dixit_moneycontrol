@@ -151,6 +151,7 @@ def ConOrSta(li, url):
 
 
 driver.maximize_window()
+driver.set_page_load_timeout(15)
 # open link
 # driver.set_page_load_timeout(120)
 # driver.set_page_load_timeout(30)
@@ -240,7 +241,7 @@ try:
         # except Exception as e:
         #     logFile.write("\nerror : cant find sector ")
         #     print("error : cant find sector ")
-        driver.set_page_load_timeout(50)
+
         HomePage = driver.current_url
         PagesLink.append(HomePage)
 
@@ -287,7 +288,6 @@ try:
         try:
             sector_pe = driver.find_element_by_xpath(
                 "//td[@class='nsesc_ttm bsesc_ttm']")
-            print(sector_pe.text)
             updateSingleValue(sector_pe.text, SpreadsheetId, 'B13')
             print("info : Sector PE is available")
             logFile.write("\ninfo : Sector PE is available")
@@ -295,7 +295,14 @@ try:
         except Exception as e:
             print("info : Beta is not available")
             logFile.write("\ninfo : Beta is not available")
-        time.sleep(3)
+
+        try:
+            updateSingleValue(Nse_string, SpreadsheetId, 'B3')
+        except Exception as e:
+            logFile.write("\nerror : cant update ")
+            logFile.write("\n"+str(e))
+            print("error : cant update ")
+            print(e)
 
         driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
         time.sleep(3)
@@ -317,15 +324,8 @@ try:
             findBalancesheet()
             logFile.write("\nerror : cant find balance sheet ")
             print("error : cant find balance sheet ")
-
-        try:
-            updateSingleValue(Nse_string, SpreadsheetId, 'B3')
-        except Exception as e:
-            logFile.write("\nerror : cant update ")
-            logFile.write("\n"+str(e))
-            print("error : cant update ")
-            print(e)
-
+        # try getting shareholder information
+        print(PagesLink)
         # values = GetLinks(SpreadsheetId)
         # values[0][0] = HomePage
 

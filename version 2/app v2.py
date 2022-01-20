@@ -5,6 +5,10 @@ from spread import updateSingleValue, UpdateCF, UpdateLink
 from Drive import CheckFolder, DriveProcess, CheckFileDir, delete_file, CreateFolder
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.keys import Keys
+# import webdriverwait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 # from selenium.webdriver.chrome.options import Options
 import time
 import sys
@@ -62,7 +66,7 @@ def getNextPageUrl():
     return url
 
 
-def get_total_shares_funds():
+def get_table_row_data(name):
     li = []
     try:
         # find td with text 'Total Shareholders Funds' and its sibling tds
@@ -70,12 +74,13 @@ def get_total_shares_funds():
 
         driver.execute_script("window.scrollTo(0, 700)")
         tds = driver.find_elements_by_xpath(
-            "//td[contains(text(),'Total Shareholders Funds')]/following-sibling::td")
-        print("info: Total Shareholders Funds is available")
+            "//td[contains(text(),'"+name+"')]/following-sibling::td")
+        print("info: "+name+" is available")
         for td in tds:
 
             print(td.text)
-            li.append(td.text)
+            if(td.text != " "):
+                li.append(td.text)
         return li
     except Exception as e:
         print("error : cant find shareholder information")
@@ -93,7 +98,8 @@ def ConOrSta(li, url):
         standAlone = getYear()
         standAloneYear_url = driver.current_url
         standAloneL.append(standAloneYear_url)
-        standalone_total_shares_funds.append(get_total_shares_funds())
+        standalone_total_shares_funds.append(
+            get_table_row_data("Total Shareholders Funds"))
         try:
             # print("info : Comma one...")
             di['standalone'] = standAlone.text.split("'")[1]
@@ -117,7 +123,8 @@ def ConOrSta(li, url):
                 logFile.write("\nerror : cant find next standalone link")
                 print(e)
 
-            standalone_total_shares_funds.append(get_total_shares_funds())
+            standalone_total_shares_funds.append(
+                get_table_row_data("Total Shareholders Funds"))
         except Exception as e:
             logFile.write("\nerror : cant find next page or " + str(e))
             print("error : cant find next page or " + str(e))
@@ -139,7 +146,8 @@ def ConOrSta(li, url):
         Consoledated = getYear()
         Consoledated_url = driver.current_url
 
-        consoledated_total_shares_funds.append(get_total_shares_funds())
+        consoledated_total_shares_funds.append(
+            get_table_row_data("Total Shareholders Funds"))
         ConsoledatedL.append(Consoledated_url)
         try:
             # print("info : Comma one...")
@@ -164,7 +172,8 @@ def ConOrSta(li, url):
                 logFile.write("\nerror : cant find next consoledated link")
                 print(e)
 
-            consoledated_total_shares_funds.append(get_total_shares_funds())
+            consoledated_total_shares_funds.append(
+                get_table_row_data("Total Shareholders Funds"))
         except Exception as e:
             logFile.write("\nerror : cant find next page or " + str(e))
             print("error : cant find next page or " + str(e))
@@ -271,6 +280,8 @@ try:
     PagesLink = []
 
     nse = companyName_link[3][index]
+
+    driver.set_page_load_timeout(50)
     try:
         print("Trying BSE of : " + name)
         logFile.write("\nTrying BSE of : " + name)
@@ -278,13 +289,15 @@ try:
             search_inp = driver.find_element_by_id("search_str")
             search_inp.send_keys(nse)
             search_inp.send_keys(Keys.ENTER)
-            try:
-                driver.find_element_by_id("proceed-button").click()
-                print("success : clicked send anyway")
-                logFile.write("success : clicked send anyway")
-            except Exception as e:
-                print(e)
-                logFile.write("\n"+str(e))
+            proceed_btn = driver.find_element_by_id("proceed-button")
+            if(proceed_btn):
+                try:
+                    proceed_btn.click()
+                    print("success : clicked send anyway")
+                    logFile.write("success : clicked send anyway")
+                except Exception as e:
+                    print(e)
+                    logFile.write("\n"+str(e))
         except TimeoutException as e:
             print("info : website taking too long to load...stopped")
             logFile.write("\ninfo : website taking too long to load...stopped")
@@ -330,27 +343,21 @@ try:
         Nse_string = str(nse).upper()
         # print(SpreadsheetId)
         # print(Nse_string)
-        driver.implicitly_wait(10)
+        driver.implicitly_wait(15)
         # scroll down to 700px
-        driver.execute_script("window.scrollTo(0, 700);")
+        driver.execute_script("window.scrollTo(0, 1200);")
         time.sleep(2)
         try:
-            beta = driver.find_element_by_xpath("//span[@class='nsebeta']")
-            # print(beta.text)
-            updateSingleValue(beta.text, SpreadsheetId, 'B10')
+
+            beta = get_table_row_data("Beta")
+            updateSingleValue(str(beta[0]), SpreadsheetId, 'B10')
             print("info : Beta is available")
             logFile.write("\ninfo : Beta is available")
 
         except Exception as e:
-            try:
-                beta = driver.find_element_by_xpath("//span[@class='bsebeta']")
-                # print(beta.text)
-                updateSingleValue(beta.text, SpreadsheetId, 'B10')
-                print("info : Beta is available")
-                logFile.write("\ninfo : Beta is available")
-            except Exception as e:
-                print("info : Beta is not available")
-                logFile.write("\ninfo : Beta is not available")
+
+            print("info : Beta is not available or " + str(e))
+            logFile.write("\ninfo : Beta is not available or " + str(e))
         try:
             sector_pe = driver.find_element_by_xpath(
                 "//td[@class='nsesc_ttm bsesc_ttm']")
@@ -371,7 +378,6 @@ try:
             print(e)
 
         driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
-        driver.set_page_load_timeout(50)
         time.sleep(3)
         balancesheet_values = []
         try:

@@ -93,13 +93,27 @@ def ConOrSta(li, url):
     ConsoledatedL = []
     di = {}
     consoledated_total_shares_funds = []
+    consoledated_long_term_borrowing = []
+    consoledated_short_term_borrowing = []
+    consoledated_cash_n_cash_eqi = []
+
     standalone_total_shares_funds = []
+    standalone_long_term_borrowing = []
+    standalone_short_term_borrowing = []
+    standalone_cash_n_cash_eqi = []
     try:
         standAlone = getYear()
         standAloneYear_url = driver.current_url
         standAloneL.append(standAloneYear_url)
         standalone_total_shares_funds.append(
             get_table_row_data("Total Shareholders Funds"))
+        standalone_long_term_borrowing.append(
+            get_table_row_data("Long Term Borrowings"))
+        standalone_short_term_borrowing.append(
+            get_table_row_data("Short Term Borrowings"))
+        standalone_cash_n_cash_eqi.append(
+            get_table_row_data("Cash And Cash Equivalents"))
+
         try:
             # print("info : Comma one...")
             di['standalone'] = standAlone.text.split("'")[1]
@@ -125,6 +139,12 @@ def ConOrSta(li, url):
 
             standalone_total_shares_funds.append(
                 get_table_row_data("Total Shareholders Funds"))
+            standalone_long_term_borrowing.append(
+                get_table_row_data("Long Term Borrowings"))
+            standalone_short_term_borrowing.append(
+                get_table_row_data("Short Term Borrowings"))
+            standalone_cash_n_cash_eqi.append(
+                get_table_row_data("Cash And Cash Equivalents"))
         except Exception as e:
             logFile.write("\nerror : cant find next page or " + str(e))
             print("error : cant find next page or " + str(e))
@@ -148,6 +168,13 @@ def ConOrSta(li, url):
 
         consoledated_total_shares_funds.append(
             get_table_row_data("Total Shareholders Funds"))
+        consoledated_long_term_borrowing.append(
+            get_table_row_data("Long Term Borrowings"))
+        consoledated_short_term_borrowing.append(
+            get_table_row_data("Short Term Borrowings"))
+        consoledated_cash_n_cash_eqi.append(
+            get_table_row_data("Cash And Cash Equivalents"))
+
         ConsoledatedL.append(Consoledated_url)
         try:
             # print("info : Comma one...")
@@ -174,6 +201,13 @@ def ConOrSta(li, url):
 
             consoledated_total_shares_funds.append(
                 get_table_row_data("Total Shareholders Funds"))
+            consoledated_long_term_borrowing.append(
+                get_table_row_data("Long Term Borrowings"))
+            consoledated_short_term_borrowing.append(
+                get_table_row_data("Short Term Borrowings"))
+            consoledated_cash_n_cash_eqi.append(
+                get_table_row_data("Cash And Cash Equivalents"))
+
         except Exception as e:
             logFile.write("\nerror : cant find next page or " + str(e))
             print("error : cant find next page or " + str(e))
@@ -196,8 +230,25 @@ def ConOrSta(li, url):
             logFile.write("\ninfo : consolidated link")
             # for d in ConsoledatedL:
             #     li.append(d)
-            for e in consoledated_total_shares_funds:
-                li.append(e)
+
+            consoledated_total_shares_funds = consoledated_total_shares_funds[0].extend(
+                consoledated_total_shares_funds[1])
+            consoledated_long_term_borrowing = consoledated_long_term_borrowing[0].extend(
+                consoledated_long_term_borrowing[1])
+            consoledated_short_term_borrowing = consoledated_short_term_borrowing[0].extend(
+                consoledated_short_term_borrowing[1])
+            consoledated_cash_n_cash_eqi = consoledated_cash_n_cash_eqi[0].extend(
+                consoledated_cash_n_cash_eqi[1])
+
+            print(consoledated_total_shares_funds)
+            print(consoledated_long_term_borrowing)
+            print(consoledated_short_term_borrowing)
+            print(consoledated_cash_n_cash_eqi)
+
+            li.append(consoledated_total_shares_funds)
+            li.append(consoledated_long_term_borrowing)
+            li.append(consoledated_short_term_borrowing)
+            li.append(consoledated_cash_n_cash_eqi)
         # elif(int(di['consoledated']) < int(di['standalone'])):
         #     # print("standalone")
         #     for d in standAloneL:
@@ -207,8 +258,27 @@ def ConOrSta(li, url):
             logFile.write("\ninfo : Standalone link")
             # for d in standAloneL:
             #     li.append(d)
-            for e in standalone_total_shares_funds:
-                li.append(e)
+            standalone_total_shares_funds = standalone_total_shares_funds[0].extend(
+                standalone_total_shares_funds[1])
+            standalone_long_term_borrowing = standalone_long_term_borrowing[0].extend(
+                standalone_long_term_borrowing[1])
+            standalone_short_term_borrowing = standalone_short_term_borrowing[0].extend(
+                standalone_short_term_borrowing[1])
+            standalone_cash_n_cash_eqi = standalone_cash_n_cash_eqi[0].extend(
+                standalone_cash_n_cash_eqi[1])
+
+            print(standalone_total_shares_funds)
+            print(standalone_long_term_borrowing)
+            print(standalone_short_term_borrowing)
+            print(standalone_cash_n_cash_eqi)
+
+            li.append(standalone_total_shares_funds)
+            li.append(standalone_long_term_borrowing)
+            li.append(standalone_short_term_borrowing)
+            li.append(standalone_cash_n_cash_eqi)
+
+            # for e in standalone_total_shares_funds:
+            #     li.append(e)
     except Exception as e:
         # print("consoledated")
         for d in ConsoledatedL:
@@ -347,6 +417,24 @@ try:
         # scroll down to 700px
         driver.execute_script("window.scrollTo(0, 1200);")
         time.sleep(2)
+
+        def get_sector_pe():
+
+            try:
+                sector_pe = driver.find_element_by_xpath(
+                    "//td[@class='nsesc_ttm bsesc_ttm']")
+
+                updateSingleValue(sector_pe.text, SpreadsheetId, 'B13')
+                print("info : Sector PE is available")
+                logFile.write("\ninfo : Sector PE is available")
+                if(sector_pe.text == "0.00" or sector_pe.text == None):
+                    driver.refresh()
+                    get_sector_pe()
+
+            except Exception as e:
+                print("info : Sector PE is not available")
+                logFile.write("\ninfo : Sector PE is not available")
+        get_sector_pe()
         try:
 
             beta = get_table_row_data("Beta")
@@ -358,16 +446,6 @@ try:
 
             print("info : Beta is not available or " + str(e))
             logFile.write("\ninfo : Beta is not available or " + str(e))
-        try:
-            sector_pe = driver.find_element_by_xpath(
-                "//td[@class='nsesc_ttm bsesc_ttm']")
-            updateSingleValue(sector_pe.text, SpreadsheetId, 'B13')
-            print("info : Sector PE is available")
-            logFile.write("\ninfo : Sector PE is available")
-
-        except Exception as e:
-            print("info : Sector PE is not available")
-            logFile.write("\ninfo : Sector PE is not available")
 
         try:
             updateSingleValue(Nse_string, SpreadsheetId, 'B3')
@@ -398,6 +476,7 @@ try:
             findBalancesheet()
             logFile.write("\nerror : cant find balance sheet ")
             print("error : cant find balance sheet ")
+
         print(balancesheet_values)
         # try getting shareholder information
 

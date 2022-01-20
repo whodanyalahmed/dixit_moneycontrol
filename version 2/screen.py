@@ -49,6 +49,7 @@ bnse = []
 # url= "https://www.screener.in/screens/59/Magic-Formula/"
 # https://www.screener.in/screens/49/loss-to-profit-companies//
 # https://www.screener.in/screens/86/quarterly-growers/
+# https://www.screener.in/screens/144352/below-one-rupee-stocks
 # https://www.screener.in/screens/3/highest-dividend-yield-shares/
 c = 0
 z= 0

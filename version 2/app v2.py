@@ -62,14 +62,38 @@ def getNextPageUrl():
     return url
 
 
+def get_total_shares_funds():
+    li = []
+    try:
+        # find td with text 'Total Shareholders Funds' and its sibling tds
+        # with text 'Total Shareholders Funds'
+
+        driver.execute_script("window.scrollTo(0, 700)")
+        tds = driver.find_elements_by_xpath(
+            "//td[contains(text(),'Total Shareholders Funds')]/following-sibling::td")
+        print("info: Total Shareholders Funds is available")
+        for td in tds:
+
+            print(td.text)
+            li.append(td.text)
+        return li
+    except Exception as e:
+        print("error : cant find shareholder information")
+        logFile.write("\nerror : cant find shareholder information")
+        print(e)
+
+
 def ConOrSta(li, url):
     standAloneL = []
     ConsoledatedL = []
     di = {}
+    consoledated_total_shares_funds = []
+    standalone_total_shares_funds = []
     try:
         standAlone = getYear()
         standAloneYear_url = driver.current_url
         standAloneL.append(standAloneYear_url)
+        standalone_total_shares_funds.append(get_total_shares_funds())
         try:
             # print("info : Comma one...")
             di['standalone'] = standAlone.text.split("'")[1]
@@ -81,6 +105,19 @@ def ConOrSta(li, url):
         try:
             standAloneYear_url2 = getNextPageUrl()
             standAloneL.append(standAloneYear_url2)
+            try:
+                driver.get(standAloneYear_url2)
+                print("info: going to next standalone link")
+            except TimeoutException as e:
+                print("error : cant load next standalone link")
+                logFile.write("\nerror : cant load next standalone link")
+                print(e)
+            except Exception as e:
+                print("error : cant find next standalone link")
+                logFile.write("\nerror : cant find next standalone link")
+                print(e)
+
+            standalone_total_shares_funds.append(get_total_shares_funds())
         except Exception as e:
             logFile.write("\nerror : cant find next page or " + str(e))
             print("error : cant find next page or " + str(e))
@@ -101,6 +138,8 @@ def ConOrSta(li, url):
     try:
         Consoledated = getYear()
         Consoledated_url = driver.current_url
+
+        consoledated_total_shares_funds.append(get_total_shares_funds())
         ConsoledatedL.append(Consoledated_url)
         try:
             # print("info : Comma one...")
@@ -113,6 +152,19 @@ def ConOrSta(li, url):
         try:
             consoledated_url2 = getNextPageUrl()
             ConsoledatedL.append(consoledated_url2)
+            try:
+                driver.get(consoledated_url2)
+                print("info: going to next consoledated link")
+            except TimeoutException as e:
+                print("error : cant load next consoledated link")
+                logFile.write("\nerror : cant load next consoledated link")
+                print(e)
+            except Exception as e:
+                print("error : cant find next consoledated link")
+                logFile.write("\nerror : cant find next consoledated link")
+                print(e)
+
+            consoledated_total_shares_funds.append(get_total_shares_funds())
         except Exception as e:
             logFile.write("\nerror : cant find next page or " + str(e))
             print("error : cant find next page or " + str(e))
@@ -133,8 +185,10 @@ def ConOrSta(li, url):
         if 'consolidated' in url:
             print("info : consolidated link")
             logFile.write("\ninfo : consolidated link")
-            for d in ConsoledatedL:
-                li.append(d)
+            # for d in ConsoledatedL:
+            #     li.append(d)
+            for e in consoledated_total_shares_funds:
+                li.append(e)
         # elif(int(di['consoledated']) < int(di['standalone'])):
         #     # print("standalone")
         #     for d in standAloneL:
@@ -142,8 +196,10 @@ def ConOrSta(li, url):
         else:
             print("info : Standalone link")
             logFile.write("\ninfo : Standalone link")
-            for d in standAloneL:
-                li.append(d)
+            # for d in standAloneL:
+            #     li.append(d)
+            for e in standalone_total_shares_funds:
+                li.append(e)
     except Exception as e:
         # print("consoledated")
         for d in ConsoledatedL:
@@ -151,7 +207,7 @@ def ConOrSta(li, url):
 
 
 driver.maximize_window()
-# driver.set_page_load_timeout(30)
+driver.set_page_load_timeout(15)
 # open link
 # driver.set_page_load_timeout(120)
 # driver.set_page_load_timeout(30)
@@ -176,7 +232,7 @@ logFile.write(str(no_of_companies))
 print(no_of_companies)
 # for index in range(no_of_companies):
 try:
-    index = 4
+    index = 0
     name = companyName_link[2][index]
     print(name)
     screener_url = "https://www.screener.in"
@@ -229,9 +285,12 @@ try:
             except Exception as e:
                 print(e)
                 logFile.write("\n"+str(e))
-
+        except TimeoutException as e:
+            print("info : website taking too long to load...stopped")
+            logFile.write("\ninfo : website taking too long to load...stopped")
+            pass
         except Exception as error:
-            print(error + " cant find: " + nse)
+            print(str(error) + " cant find: " + nse)
             logFile.write("\n"+str(error) + "cant find: " + nse)
         # time.sleep(3)
         # try:
@@ -272,9 +331,9 @@ try:
         # print(SpreadsheetId)
         # print(Nse_string)
         driver.implicitly_wait(10)
-        time.sleep(2)
         # scroll down to 700px
         driver.execute_script("window.scrollTo(0, 700);")
+        time.sleep(2)
         try:
             beta = driver.find_element_by_xpath("//span[@class='nsebeta']")
             # print(beta.text)
@@ -283,8 +342,15 @@ try:
             logFile.write("\ninfo : Beta is available")
 
         except Exception as e:
-            print("info : Sector PE is not available")
-            logFile.write("\ninfo : Sector PE is not available")
+            try:
+                beta = driver.find_element_by_xpath("//span[@class='bsebeta']")
+                # print(beta.text)
+                updateSingleValue(beta.text, SpreadsheetId, 'B10')
+                print("info : Beta is available")
+                logFile.write("\ninfo : Beta is available")
+            except Exception as e:
+                print("info : Beta is not available")
+                logFile.write("\ninfo : Beta is not available")
         try:
             sector_pe = driver.find_element_by_xpath(
                 "//td[@class='nsesc_ttm bsesc_ttm']")
@@ -293,8 +359,8 @@ try:
             logFile.write("\ninfo : Sector PE is available")
 
         except Exception as e:
-            print("info : Beta is not available")
-            logFile.write("\ninfo : Beta is not available")
+            print("info : Sector PE is not available")
+            logFile.write("\ninfo : Sector PE is not available")
 
         try:
             updateSingleValue(Nse_string, SpreadsheetId, 'B3')
@@ -305,8 +371,9 @@ try:
             print(e)
 
         driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
+        driver.set_page_load_timeout(50)
         time.sleep(3)
-        balancesheet_links = []
+        balancesheet_values = []
         try:
             def findBalancesheet():
                 Bs = driver.find_element_by_xpath(
@@ -314,7 +381,7 @@ try:
                 Bsurl = Bs.get_attribute('href')
                 driver.get(Bsurl)
                 time.sleep(5)
-                ConOrSta(balancesheet_links, screener_url)
+                ConOrSta(balancesheet_values, screener_url)
                 logFile.write("\nsuccess : fetched Balance Sheet")
                 print("success : fetched Balance Sheet")
             findBalancesheet()
@@ -325,178 +392,162 @@ try:
             findBalancesheet()
             logFile.write("\nerror : cant find balance sheet ")
             print("error : cant find balance sheet ")
+        print(balancesheet_values)
         # try getting shareholder information
-        print(balancesheet_links)
-        for balacesheet_link in balancesheet_links:
-            driver.get(balacesheet_link)
-            try:
-                # find td with text 'Total Shareholders Funds' and its sibling tds
-                # with text 'Total Shareholders Funds'
 
-                driver.execute_script("window.scrollTo(0, 700)")
-                tds = driver.find_elements_by_xpath(
-                    "//td[contains(text(),'Total Shareholders Funds')]/following-sibling::td").text
-                for td in tds:
+        # td = driver.find_element_by_xpath(
 
-                    print(td.text)
-                print("info: Total Shareholders Funds is available")
-            except Exception as e:
-                print("error : cant find shareholder information")
-                logFile.write("\nerror : cant find shareholder information")
-                print(e)
-                # td = driver.find_element_by_xpath(
+        # values = GetLinks(SpreadsheetId)
+        # values[0][0] = HomePage
 
-                # values = GetLinks(SpreadsheetId)
-                # values[0][0] = HomePage
+        # def populatePairValues(PairLinks, index1, index2):
+        #     if(len(PairLinks) == 2):
+        #         values[index1][0] = PairLinks[0]
+        #         values[index2][0] = PairLinks[1]
+        #     elif(len(PairLinks) == 1):
+        #         values[index1][0] = PairLinks[0]
+        #         values[index2][0] = None
+        #     else:
+        #         values[index1][0] = None
+        #         values[index2][0] = None
+        # try:
 
-                # def populatePairValues(PairLinks, index1, index2):
-                #     if(len(PairLinks) == 2):
-                #         values[index1][0] = PairLinks[0]
-                #         values[index2][0] = PairLinks[1]
-                #     elif(len(PairLinks) == 1):
-                #         values[index1][0] = PairLinks[0]
-                #         values[index2][0] = None
-                #     else:
-                #         values[index1][0] = None
-                #         values[index2][0] = None
-                # try:
+        #     BalanceSheetLinks = Find_links("balance", PagesLink)
+        #     # populatePairValues(BalanceSheetLinks, 1, 2)
+        # except Exception as e:
+        #     logFile.write("\n"+str(e))
+        #     print(e)
 
-                #     BalanceSheetLinks = Find_links("balance", PagesLink)
-                #     # populatePairValues(BalanceSheetLinks, 1, 2)
-                # except Exception as e:
-                #     logFile.write("\n"+str(e))
-                #     print(e)
+        # time.sleep(3)
+        # try:
+        #     def findProfitLoss():
+        #         Pl = driver.find_element_by_xpath(
+        #             "//a[@title='Profit & Loss' and @class='ProfitLoss']")
+        #         PLurl = Pl.get_attribute('href')
+        #         driver.get(PLurl)
+        #         ConOrSta(PagesLink, screener_url)
+        #         logFile.write("\nsuccess : fetched Profit and Loss")
+        #         print("success : fetched Profit and Loss")
+        #     findProfitLoss()
+        # except Exception as e:
+        #     driver.refresh()
+        #     logFile.write("\nTrying again to find Profit Loss")
+        #     print("Trying again to find Profit Loss")
+        #     findProfitLoss()
+        #     logFile.write("\nCant find profit loss or " + str(e))
+        #     print("Cant find profit loss or " + str(e))
+        # try:
+        #     ProfitLossLinks = Find_links("profit", PagesLink)
+        #     populatePairValues(ProfitLossLinks, 3, 4)
+        # except Exception as e:
+        #     logFile.write("\n"+str(e))
+        #     print(e)
+        # # Querterly report
 
-                # time.sleep(3)
-                # try:
-                #     def findProfitLoss():
-                #         Pl = driver.find_element_by_xpath(
-                #             "//a[@title='Profit & Loss' and @class='ProfitLoss']")
-                #         PLurl = Pl.get_attribute('href')
-                #         driver.get(PLurl)
-                #         ConOrSta(PagesLink, screener_url)
-                #         logFile.write("\nsuccess : fetched Profit and Loss")
-                #         print("success : fetched Profit and Loss")
-                #     findProfitLoss()
-                # except Exception as e:
-                #     driver.refresh()
-                #     logFile.write("\nTrying again to find Profit Loss")
-                #     print("Trying again to find Profit Loss")
-                #     findProfitLoss()
-                #     logFile.write("\nCant find profit loss or " + str(e))
-                #     print("Cant find profit loss or " + str(e))
-                # try:
-                #     ProfitLossLinks = Find_links("profit", PagesLink)
-                #     populatePairValues(ProfitLossLinks, 3, 4)
-                # except Exception as e:
-                #     logFile.write("\n"+str(e))
-                #     print(e)
-                # # Querterly report
+        # # time.sleep(3)
 
-                # # time.sleep(3)
+        # try:
+        #     def findQuarReport():
+        #         Qr = driver.find_element_by_xpath(
+        #             "//a[@title='Quarterly Results' and @class='QuarterlyResults']")
+        #         Qrurl = Qr.get_attribute('href')
+        #         driver.get(Qrurl)
+        #         ConOrSta(PagesLink, screener_url)
+        #         logFile.write("\nsuccess : fetched Quarterly Report")
+        #         print("success : fetched Quarterly Report")
+        #     findQuarReport()
+        # except Exception as e:
+        #     driver.refresh()
+        #     logFile.write("\nTrying again to find Quarterly Report")
+        #     print("Trying again to find Quarterly Report")
+        #     findQuarReport()
+        #     logFile.write("\nCant find Qurarterly report or " + str(e))
+        #     print("Cant find Qurarterly report or " + str(e))
+        # try:
+        #     QuarterlyLinks = Find_links("quarterly", PagesLink)
+        #     populatePairValues(QuarterlyLinks, 5, 6)
+        # except Exception as e:
+        #     logFile.write("\n"+str(e))
+        #     print(e)
+        # # cash flow
+        # try:
+        #     def findCashFlow():
+        #         Cf = driver.find_element_by_xpath(
+        #             "//a[@title='Cash Flows' and @class='CashFlows']")
+        #         Cfurl = Cf.get_attribute('href')
+        #         driver.get(Cfurl)
+        #         ConOrSta(PagesLink, screener_url)
+        #         logFile.write("\nsuccess : fetched Cash Flow")
+        #         print("success : fetched Cash Flow")
+        #     findCashFlow()
+        # except Exception as e:
+        #     driver.refresh()
+        #     logFile.write("\nTrying again to find Cash flow")
+        #     print("Trying again to find Cash flow")
+        #     findCashFlow()
+        #     logFile.write("\nCant find Cash flow or " + str(e))
+        #     print("Cant find Cash flow or " + str(e))
+        # try:
+        #     CashFlowLinks = Find_links("cash", PagesLink)
+        #     populatePairValues(CashFlowLinks, 7, 8)
+        # except Exception as e:
+        #     logFile.write("\n"+str(e))
+        #     print(e)
+        # # Capital Structure
+        # # time.sleep(3)
 
-                # try:
-                #     def findQuarReport():
-                #         Qr = driver.find_element_by_xpath(
-                #             "//a[@title='Quarterly Results' and @class='QuarterlyResults']")
-                #         Qrurl = Qr.get_attribute('href')
-                #         driver.get(Qrurl)
-                #         ConOrSta(PagesLink, screener_url)
-                #         logFile.write("\nsuccess : fetched Quarterly Report")
-                #         print("success : fetched Quarterly Report")
-                #     findQuarReport()
-                # except Exception as e:
-                #     driver.refresh()
-                #     logFile.write("\nTrying again to find Quarterly Report")
-                #     print("Trying again to find Quarterly Report")
-                #     findQuarReport()
-                #     logFile.write("\nCant find Qurarterly report or " + str(e))
-                #     print("Cant find Qurarterly report or " + str(e))
-                # try:
-                #     QuarterlyLinks = Find_links("quarterly", PagesLink)
-                #     populatePairValues(QuarterlyLinks, 5, 6)
-                # except Exception as e:
-                #     logFile.write("\n"+str(e))
-                #     print(e)
-                # # cash flow
-                # try:
-                #     def findCashFlow():
-                #         Cf = driver.find_element_by_xpath(
-                #             "//a[@title='Cash Flows' and @class='CashFlows']")
-                #         Cfurl = Cf.get_attribute('href')
-                #         driver.get(Cfurl)
-                #         ConOrSta(PagesLink, screener_url)
-                #         logFile.write("\nsuccess : fetched Cash Flow")
-                #         print("success : fetched Cash Flow")
-                #     findCashFlow()
-                # except Exception as e:
-                #     driver.refresh()
-                #     logFile.write("\nTrying again to find Cash flow")
-                #     print("Trying again to find Cash flow")
-                #     findCashFlow()
-                #     logFile.write("\nCant find Cash flow or " + str(e))
-                #     print("Cant find Cash flow or " + str(e))
-                # try:
-                #     CashFlowLinks = Find_links("cash", PagesLink)
-                #     populatePairValues(CashFlowLinks, 7, 8)
-                # except Exception as e:
-                #     logFile.write("\n"+str(e))
-                #     print(e)
-                # # Capital Structure
-                # # time.sleep(3)
+        # try:
+        #     def findCapStructure():
+        #         Cs = driver.find_element_by_xpath(
+        #             "//a[@title='Capital Structure' and @class='CapitalStructure']")
+        #         Csurl = Cs.get_attribute('href')
+        #         PagesLink.append(Csurl)
+        #         logFile.write("\nsuccess : fetched Capital Structure")
+        #         print("success : fetched Capital Structure")
+        #     findCapStructure()
+        # except Exception as e:
+        #     driver.refresh()
+        #     logFile.write("\nTrying again to find Capital Structure")
+        #     print("Trying again to find Capital Structure")
+        #     findCapStructure()
+        #     logFile.write("\nCant find Capital Structure or " + str(e))
+        #     print("Cant find Capital Structure or " + str(e))
 
-                # try:
-                #     def findCapStructure():
-                #         Cs = driver.find_element_by_xpath(
-                #             "//a[@title='Capital Structure' and @class='CapitalStructure']")
-                #         Csurl = Cs.get_attribute('href')
-                #         PagesLink.append(Csurl)
-                #         logFile.write("\nsuccess : fetched Capital Structure")
-                #         print("success : fetched Capital Structure")
-                #     findCapStructure()
-                # except Exception as e:
-                #     driver.refresh()
-                #     logFile.write("\nTrying again to find Capital Structure")
-                #     print("Trying again to find Capital Structure")
-                #     findCapStructure()
-                #     logFile.write("\nCant find Capital Structure or " + str(e))
-                #     print("Cant find Capital Structure or " + str(e))
+        # def populateSingleValues(PairLinks, index1):
+        #     if(len(PairLinks) == 1):
+        #         values[index1][0] = PairLinks[0]
+        #     else:
+        #         values[index1][0] = None
+        # try:
+        #     CapitalLinks = Find_links("capital", PagesLink)
+        #     populateSingleValues(CapitalLinks, 9)
+        # except Exception as e:
+        #     logFile.write("\n"+str(e))
+        #     print(e)
+        # # for screener
+        # try:
 
-                # def populateSingleValues(PairLinks, index1):
-                #     if(len(PairLinks) == 1):
-                #         values[index1][0] = PairLinks[0]
-                #     else:
-                #         values[index1][0] = None
-                # try:
-                #     CapitalLinks = Find_links("capital", PagesLink)
-                #     populateSingleValues(CapitalLinks, 9)
-                # except Exception as e:
-                #     logFile.write("\n"+str(e))
-                #     print(e)
-                # # for screener
-                # try:
-
-                #     PagesLink.append(screener_url)
-                #     # print(screener_url)
-                # except Exception as e:
-                #     screener_url = None
-                #     PagesLink.append(screener_url)
-                #     logFile.write("\nerror : cant get screener url or " + str(e))
-                #     print("error : cant get screener url or " + str(e))
-                # try:
-                #     ScreenerLinks = Find_links("screener", PagesLink)
-                #     populateSingleValues(ScreenerLinks, 10)
-                # except Exception as e:
-                #     logFile.write("\n"+str(e))
-                #     print(e)
-                # logFile.write(str(values))
-                # print(values)
-                # try:
-                #     UpdateLink(SpreadsheetId, values)
-                # except Exception as e:
-                #     print(e)
-                #     logFile.write("\n"+str(e))
-                #   CF screener
+        #     PagesLink.append(screener_url)
+        #     # print(screener_url)
+        # except Exception as e:
+        #     screener_url = None
+        #     PagesLink.append(screener_url)
+        #     logFile.write("\nerror : cant get screener url or " + str(e))
+        #     print("error : cant get screener url or " + str(e))
+        # try:
+        #     ScreenerLinks = Find_links("screener", PagesLink)
+        #     populateSingleValues(ScreenerLinks, 10)
+        # except Exception as e:
+        #     logFile.write("\n"+str(e))
+        #     print(e)
+        # logFile.write(str(values))
+        # print(values)
+        # try:
+        #     UpdateLink(SpreadsheetId, values)
+        # except Exception as e:
+        #     print(e)
+        #     logFile.write("\n"+str(e))
+        #   CF screener
         try:
             driver.get(screener_url)
             driver.find_element_by_xpath(

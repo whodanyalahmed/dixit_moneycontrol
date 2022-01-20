@@ -562,6 +562,201 @@ def get_ProfitLoss_data(li, url):
             li.append(consoledated_PL_for_period_final)
 
 
+def get_Quarterly_data(li, url):
+    standAloneL = []
+    ConsoledatedL = []
+    di = {}
+    consoledated_net_SI_from_profit = []
+    consoledated_net_PL_for_period = []
+    consoledated_before_other_item_tax = []
+
+    standalone_net_SI_from_profit = []
+    standalone_net_PL_for_period = []
+    standalone_before_other_item_tax = []
+    try:
+        standAlone = getYear()
+        standAloneYear_url = driver.current_url
+        standAloneL.append(standAloneYear_url)
+        standalone_net_SI_from_profit.append(
+            get_table_row_data("Net Sales/Income from operations"))
+        standalone_net_PL_for_period.append(
+            get_table_row_data("Net Profit/(Loss) For the Period"))
+        standalone_before_other_item_tax.append(
+            get_table_row_data("P/L Before Other Inc. , Int., Excpt. Items & Tax"))
+
+        try:
+            # print("info : Comma one...")
+            di['standalone'] = standAlone.text.split("'")[1]
+        except Exception as e:
+            di['standalone'] = standAlone.text.split(" ")[1]
+        # print(di['standalone'] + " and waiting")
+        # time.sleep(10)
+        # standAlone_url2 = driver.find_element_by_xpath("//ul[@class='pagination']")
+        try:
+            standAloneYear_url2 = getNextPageUrl()
+            standAloneL.append(standAloneYear_url2)
+            try:
+                driver.get(standAloneYear_url2)
+                print("info: going to next standalone link")
+            except TimeoutException as e:
+                print("error : cant load next standalone link")
+                logFile.write("\nerror : cant load next standalone link")
+                print(e)
+            except Exception as e:
+                print("error : cant find next standalone link")
+                logFile.write("\nerror : cant find next standalone link")
+                print(e)
+
+            standalone_net_SI_from_profit.append(
+                get_table_row_data("Net Sales/Income from operations"))
+            standalone_net_PL_for_period.append(
+                get_table_row_data("Net Profit/(Loss) For the Period"))
+            standalone_before_other_item_tax.append(
+                get_table_row_data("P/L Before Other Inc. , Int., Excpt. Items & Tax"))
+
+        except Exception as e:
+            logFile.write("\nerror : cant find next page or " + str(e))
+            print("error : cant find next page or " + str(e))
+            standAloneL.append(None)
+
+    except Exception as e:
+        logFile.write("\nerror : cant find standalone years "+str(e))
+        print("error : cant find standalone years "+str(e))
+        standAloneL.append(None)
+        standAloneL.append(None)
+
+    try:
+        driver.find_element_by_id("#consolidated").click()
+    except Exception as e:
+        logFile.write("\nerror : cant find consoledated link "+str(e))
+        print("error : cant find consoledated link "+str(e))
+
+    try:
+        Consoledated = getYear()
+        Consoledated_url = driver.current_url
+
+        consoledated_net_SI_from_profit.append(
+            get_table_row_data("Net Sales/Income from operations"))
+        consoledated_net_PL_for_period.append(
+            get_table_row_data("Net Profit/(Loss) For the Period"))
+        consoledated_before_other_item_tax.append(
+            get_table_row_data("P/L Before Other Inc. , Int., Excpt. Items & Tax"))
+
+        ConsoledatedL.append(Consoledated_url)
+        try:
+            # print("info : Comma one...")
+            di['consoledated'] = Consoledated.text.split("'")[1]
+        except Exception as e:
+            di['consoledated'] = Consoledated.text.split(" ")[1]
+        # print(di['consoledated'] + " and waiting")
+        # time.sleep(10)
+        # consoledated_url2 = driver.find_element_by_xpath("//ul[@class='pagination']/")
+        try:
+            consoledated_url2 = getNextPageUrl()
+            ConsoledatedL.append(consoledated_url2)
+            try:
+                driver.get(consoledated_url2)
+                print("info: going to next consoledated link")
+            except TimeoutException as e:
+                print("error : cant load next consoledated link")
+                logFile.write("\nerror : cant load next consoledated link")
+                print(e)
+            except Exception as e:
+                print("error : cant find next consoledated link")
+                logFile.write("\nerror : cant find next consoledated link")
+                print(e)
+            consoledated_net_SI_from_profit.append(
+                get_table_row_data("Net Sales/Income from operations"))
+            consoledated_net_PL_for_period.append(
+                get_table_row_data("Net Profit/(Loss) For the Period"))
+            consoledated_before_other_item_tax.append(
+                get_table_row_data("P/L Before Other Inc. , Int., Excpt. Items & Tax"))
+
+        except Exception as e:
+            logFile.write("\nerror : cant find next page or " + str(e))
+            print("error : cant find next page or " + str(e))
+            ConsoledatedL.append(None)
+
+    except Exception as e:
+        # print("info : cant find consoledated years "+str(e))
+        if(len(standAloneL) == 2):
+            for e in standAloneL:
+                ConsoledatedL.append(e)
+        else:
+            ConsoledatedL.append(None)
+            ConsoledatedL.append(None)
+    # print(type(di['consoledated']))
+    # print(int(di['consoledated']))
+    # print(int(di['standalone']))\
+    try:
+        if 'consolidated' in url:
+            print("info : consolidated link")
+            logFile.write("\ninfo : consolidated link")
+            # for d in ConsoledatedL:
+            #     li.append(d)
+
+            consoledated_net_SI_from_profit_final = sum(
+                consoledated_net_SI_from_profit, [])
+            consoledated_net_PL_for_period_final = sum(
+                consoledated_net_PL_for_period, [])
+            consoledated_before_other_item_tax_final = sum(
+                consoledated_before_other_item_tax, [])
+
+            print(consoledated_net_SI_from_profit_final)
+            print(consoledated_net_PL_for_period_final)
+            print(consoledated_before_other_item_tax_final)
+
+            li.append(consoledated_net_SI_from_profit_final)
+            li.append(consoledated_net_PL_for_period_final)
+            li.append(consoledated_before_other_item_tax_final)
+        # elif(int(di['consoledated']) < int(di['standalone'])):
+        #     # print("standalone")
+        #     for d in standAloneL:
+        #         li.append(d)
+        else:
+            print("info : Standalone link")
+            logFile.write("\ninfo : Standalone link")
+            # for d in standAloneL:
+            #     li.append(d)
+
+            standalone_net_SI_from_profit_final = sum(
+                standalone_net_SI_from_profit, [])
+            standalone_net_PL_for_period_final = sum(
+                standalone_net_PL_for_period, [])
+            standalone_before_other_item_tax_final = sum(
+                standalone_before_other_item_tax, [])
+
+            print(standalone_net_SI_from_profit_final)
+            print(standalone_net_PL_for_period_final)
+            print(standalone_before_other_item_tax_final)
+
+            li.append(standalone_net_SI_from_profit_final)
+            li.append(standalone_net_PL_for_period_final)
+            li.append(standalone_before_other_item_tax_final)
+
+            # for e in standalone_total_shares_funds:
+            #     li.append(e)
+    except Exception as e:
+        # print("consoledated")
+        for d in ConsoledatedL:
+            li.append(d)
+
+        consoledated_net_SI_from_profit_final = sum(
+            consoledated_net_SI_from_profit, [])
+        consoledated_net_PL_for_period_final = sum(
+            consoledated_net_PL_for_period, [])
+        consoledated_before_other_item_tax_final = sum(
+            consoledated_before_other_item_tax, [])
+
+        print(consoledated_net_SI_from_profit_final)
+        print(consoledated_net_PL_for_period_final)
+        print(consoledated_before_other_item_tax_final)
+
+        li.append(consoledated_net_SI_from_profit_final)
+        li.append(consoledated_net_PL_for_period_final)
+        li.append(consoledated_before_other_item_tax_final)
+
+
 driver.maximize_window()
 driver.set_page_load_timeout(15)
 # open link
@@ -826,31 +1021,26 @@ try:
         update_values_with_range(Profitloss_values, 29)
         # # Querterly report
 
-        # # time.sleep(3)
-
-        # try:
-        #     def findQuarReport():
-        #         Qr = driver.find_element_by_xpath(
-        #             "//a[@title='Quarterly Results' and @class='QuarterlyResults']")
-        #         Qrurl = Qr.get_attribute('href')
-        #         driver.get(Qrurl)
-        #         ConOrSta(PagesLink, screener_url)
-        #         logFile.write("\nsuccess : fetched Quarterly Report")
-        #         print("success : fetched Quarterly Report")
-        #     findQuarReport()
-        # except Exception as e:
-        #     driver.refresh()
-        #     logFile.write("\nTrying again to find Quarterly Report")
-        #     print("Trying again to find Quarterly Report")
-        #     findQuarReport()
-        #     logFile.write("\nCant find Qurarterly report or " + str(e))
-        #     print("Cant find Qurarterly report or " + str(e))
-        # try:
-        #     QuarterlyLinks = Find_links("quarterly", PagesLink)
-        #     populatePairValues(QuarterlyLinks, 5, 6)
-        # except Exception as e:
-        #     logFile.write("\n"+str(e))
-        #     print(e)
+        time.sleep(3)
+        Quarterly_values = []
+        try:
+            def findQuarReport():
+                Qr = driver.find_element_by_xpath(
+                    "//a[@title='Quarterly Results' and @class='QuarterlyResults']")
+                Qrurl = Qr.get_attribute('href')
+                driver.get(Qrurl)
+                get_Quarterly_data(Quarterly_values, screener_url)
+                logFile.write("\nsuccess : fetched Quarterly Report")
+                print("success : fetched Quarterly Report")
+            findQuarReport()
+        except Exception as e:
+            driver.refresh()
+            logFile.write("\nTrying again to find Quarterly Report")
+            print("Trying again to find Quarterly Report")
+            findQuarReport()
+            logFile.write("\nCant find Qurarterly report or " + str(e))
+            print("Cant find Qurarterly report or " + str(e))
+        update_values_with_range(Quarterly_values, 44)
         # # cash flow
         # try:
         #     def findCashFlow():

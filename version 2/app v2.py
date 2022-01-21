@@ -757,6 +757,196 @@ def get_Quarterly_data(li, url):
         li.append(consoledated_before_other_item_tax_final)
 
 
+def get_CashFlow_data(li, url):
+    standAloneL = []
+    ConsoledatedL = []
+    di = {}
+    consoledated_net_cash_from_OA = []
+
+    standalone_net_cash_from_OA = []
+    try:
+        standAlone = getYear()
+        standAloneYear_url = driver.current_url
+        standAloneL.append(standAloneYear_url)
+        standalone_net_cash_from_OA.append(
+            get_table_row_data("Net CashFlow From Operating Activities"))
+
+        try:
+            # print("info : Comma one...")
+            di['standalone'] = standAlone.text.split("'")[1]
+        except Exception as e:
+            di['standalone'] = standAlone.text.split(" ")[1]
+        # print(di['standalone'] + " and waiting")
+        # time.sleep(10)
+        # standAlone_url2 = driver.find_element_by_xpath("//ul[@class='pagination']")
+        try:
+            standAloneYear_url2 = getNextPageUrl()
+            standAloneL.append(standAloneYear_url2)
+            try:
+                driver.get(standAloneYear_url2)
+                print("info: going to next standalone link")
+            except TimeoutException as e:
+                print("error : cant load next standalone link")
+                logFile.write("\nerror : cant load next standalone link")
+                print(e)
+            except Exception as e:
+                print("error : cant find next standalone link")
+                logFile.write("\nerror : cant find next standalone link")
+                print(e)
+
+            standalone_net_cash_from_OA.append(
+                get_table_row_data("Net CashFlow From Operating Activities"))
+
+        except Exception as e:
+            logFile.write("\nerror : cant find next page or " + str(e))
+            print("error : cant find next page or " + str(e))
+            standAloneL.append(None)
+
+    except Exception as e:
+        logFile.write("\nerror : cant find standalone years "+str(e))
+        print("error : cant find standalone years "+str(e))
+        standAloneL.append(None)
+        standAloneL.append(None)
+
+    try:
+        driver.find_element_by_id("#consolidated").click()
+    except Exception as e:
+        logFile.write("\nerror : cant find consoledated link "+str(e))
+        print("error : cant find consoledated link "+str(e))
+
+    try:
+        Consoledated = getYear()
+        Consoledated_url = driver.current_url
+
+        consoledated_net_cash_from_OA.append(
+            get_table_row_data("Net CashFlow From Operating Activities"))
+
+        ConsoledatedL.append(Consoledated_url)
+        try:
+            # print("info : Comma one...")
+            di['consoledated'] = Consoledated.text.split("'")[1]
+        except Exception as e:
+            di['consoledated'] = Consoledated.text.split(" ")[1]
+        # print(di['consoledated'] + " and waiting")
+        # time.sleep(10)
+        # consoledated_url2 = driver.find_element_by_xpath("//ul[@class='pagination']/")
+        try:
+            consoledated_url2 = getNextPageUrl()
+            ConsoledatedL.append(consoledated_url2)
+            try:
+                driver.get(consoledated_url2)
+                print("info: going to next consoledated link")
+            except TimeoutException as e:
+                print("error : cant load next consoledated link")
+                logFile.write("\nerror : cant load next consoledated link")
+                print(e)
+            except Exception as e:
+                print("error : cant find next consoledated link")
+                logFile.write("\nerror : cant find next consoledated link")
+                print(e)
+            consoledated_net_cash_from_OA.append(
+                get_table_row_data("Net CashFlow From Operating Activities"))
+
+        except Exception as e:
+            logFile.write("\nerror : cant find next page or " + str(e))
+            print("error : cant find next page or " + str(e))
+            ConsoledatedL.append(None)
+
+    except Exception as e:
+        # print("info : cant find consoledated years "+str(e))
+        if(len(standAloneL) == 2):
+            for e in standAloneL:
+                ConsoledatedL.append(e)
+        else:
+            ConsoledatedL.append(None)
+            ConsoledatedL.append(None)
+    # print(type(di['consoledated']))
+    # print(int(di['consoledated']))
+    # print(int(di['standalone']))\
+    try:
+        if 'consolidated' in url:
+            print("info : consolidated link")
+            logFile.write("\ninfo : consolidated link")
+            # for d in ConsoledatedL:
+            #     li.append(d)
+
+            consoledated_net_cash_from_OA_final = sum(
+                consoledated_net_cash_from_OA, [])
+            print(consoledated_net_cash_from_OA_final)
+
+            li.append(consoledated_net_cash_from_OA_final)
+
+        # elif(int(di['consoledated']) < int(di['standalone'])):
+        #     # print("standalone")
+        #     for d in standAloneL:
+        #         li.append(d)
+        else:
+            print("info : Standalone link")
+            logFile.write("\ninfo : Standalone link")
+            # for d in standAloneL:
+            #     li.append(d)
+
+            standalone_net_cash_from_OA_final = sum(
+                standalone_net_cash_from_OA, [])
+
+            print(standalone_net_cash_from_OA_final)
+            li.append(standalone_net_cash_from_OA_final)
+
+            # for e in standalone_total_shares_funds:
+            #     li.append(e)
+    except Exception as e:
+        # print("consoledated")
+        for d in ConsoledatedL:
+            li.append(d)
+
+        consoledated_net_cash_from_OA_final = sum(
+            consoledated_net_cash_from_OA, [])
+        print(consoledated_net_cash_from_OA_final)
+
+        li.append(consoledated_net_cash_from_OA_final)
+
+
+def get_capital_structure_data(table_data):
+    driver.implicitly_wait(10)
+    try:
+        # get all the table rows with class mctable1 and store in a list
+        table_rows = driver.find_elements_by_xpath(
+            "//table[@class='mctable1']/tbody/tr")
+
+        for table_row in table_rows:
+            # get table_row td values
+            try:
+                temp = []
+                table_row_td = table_row.find_elements_by_tag_name("td")
+
+                counter = 0
+                for data in table_row_td:
+                    if(counter == 0 or counter == 4 or counter == 5):
+                        if (counter == 0):
+                            years = data.find_elements_by_tag_name("span")
+                            temp.append(years[0].text+" to " + years[1].text)
+                        else:
+                            temp.append(data.text)
+
+                    # print(data)
+                    counter += 1
+                table_data.append(temp)
+            except Exception as e:
+                print("error: table row not found")
+                print(e)
+        print(table_data)
+        print("info: with these "+str(len(table_data))+" number of data")
+        if(len(table_data) > 10):
+            # get first 10 elements and save in same list
+            print("info: Data is more then 10 years trimming it to 10 years")
+            table_data = table_data[0:10]
+        print(table_data)
+        print("info: with these "+str(len(table_data))+" number of data")
+    except Exception as e:
+        print("error: table not loaded")
+        print(e)
+
+
 driver.maximize_window()
 driver.set_page_load_timeout(15)
 # open link
@@ -888,7 +1078,6 @@ try:
         driver.implicitly_wait(15)
         # scroll down to 700px
         driver.execute_script("window.scrollTo(0, 1200);")
-        time.sleep(2)
 
         def get_sector_pe():
 
@@ -928,7 +1117,7 @@ try:
             print(e)
 
         driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
-        time.sleep(3)
+        driver.implicitly_wait(15)
         balancesheet_values = []
         try:
             def findBalancesheet():
@@ -952,7 +1141,7 @@ try:
         print(balancesheet_values)
         # update total shareholders data
 
-        def update_values_with_range(balancesheet_values, range_num):
+        def update_values_with_range(balancesheet_values, range_num, step):
           # range_num = 18
             for balancesheet_value in balancesheet_values:
 
@@ -965,14 +1154,14 @@ try:
                     print("info: "+balance_sheet_Range+" data is updated")
                     logFile.write("\ninfo: "+balance_sheet_Range +
                                   " data is updated")
-                    range_num += 2
+                    range_num += step
                     # updateRange(SpreadsheetId, [balancesheet_values[0]], 'K18:B18')
                 except Exception as e:
                     print("info: "+balance_sheet_Range+" data is not updated")
                     logFile.write("\ninfo: "+balance_sheet_Range +
                                   " data is not updated")
                     pass
-        update_values_with_range(balancesheet_values, 18)
+        update_values_with_range(balancesheet_values, 18, 2)
         # try getting shareholder information
 
         # td = driver.find_element_by_xpath(
@@ -998,7 +1187,7 @@ try:
         #     logFile.write("\n"+str(e))
         #     print(e)
 
-        time.sleep(3)
+        driver.implicitly_wait(15)
         Profitloss_values = []
         try:
             def findProfitLoss():
@@ -1018,10 +1207,9 @@ try:
             logFile.write("\nCant find profit loss or " + str(e))
             print("Cant find profit loss or " + str(e))
         print(Profitloss_values)
-        update_values_with_range(Profitloss_values, 29)
+        update_values_with_range(Profitloss_values, 29, 2)
         # # Querterly report
-
-        time.sleep(3)
+        driver.implicitly_wait(10)
         Quarterly_values = []
         try:
             def findQuarReport():
@@ -1040,25 +1228,28 @@ try:
             findQuarReport()
             logFile.write("\nCant find Qurarterly report or " + str(e))
             print("Cant find Qurarterly report or " + str(e))
-        update_values_with_range(Quarterly_values, 44)
-        # # cash flow
-        # try:
-        #     def findCashFlow():
-        #         Cf = driver.find_element_by_xpath(
-        #             "//a[@title='Cash Flows' and @class='CashFlows']")
-        #         Cfurl = Cf.get_attribute('href')
-        #         driver.get(Cfurl)
-        #         ConOrSta(PagesLink, screener_url)
-        #         logFile.write("\nsuccess : fetched Cash Flow")
-        #         print("success : fetched Cash Flow")
-        #     findCashFlow()
-        # except Exception as e:
-        #     driver.refresh()
-        #     logFile.write("\nTrying again to find Cash flow")
-        #     print("Trying again to find Cash flow")
-        #     findCashFlow()
-        #     logFile.write("\nCant find Cash flow or " + str(e))
-        #     print("Cant find Cash flow or " + str(e))
+        update_values_with_range(Quarterly_values, 44, 2)
+        # cash flow
+        driver.implicitly_wait(10)
+        CashFlow_Values = []
+        try:
+            def findCashFlow():
+                Cf = driver.find_element_by_xpath(
+                    "//a[@title='Cash Flows' and @class='CashFlows']")
+                Cfurl = Cf.get_attribute('href')
+                driver.get(Cfurl)
+                get_CashFlow_data(CashFlow_Values, screener_url)
+                logFile.write("\nsuccess : fetched Cash Flow")
+                print("success : fetched Cash Flow")
+            findCashFlow()
+        except Exception as e:
+            driver.refresh()
+            logFile.write("\nTrying again to find Cash flow")
+            print("Trying again to find Cash flow")
+            findCashFlow()
+            logFile.write("\nCant find Cash flow or " + str(e))
+            print("Cant find Cash flow or " + str(e))
+        update_values_with_range(CashFlow_Values, 54, 2)
         # try:
         #     CashFlowLinks = Find_links("cash", PagesLink)
         #     populatePairValues(CashFlowLinks, 7, 8)
@@ -1067,24 +1258,45 @@ try:
         #     print(e)
         # # Capital Structure
         # # time.sleep(3)
+        Capital_Structure_Data = []
+        try:
+            def findCapStructure():
+                Cs = driver.find_element_by_xpath(
+                    "//a[@title='Capital Structure' and @class='CapitalStructure']")
+                Csurl = Cs.get_attribute('href')
+                driver.get(Csurl)
+                get_capital_structure_data(Capital_Structure_Data)
+                logFile.write("\nsuccess : fetched Capital Structure")
+                print("success : fetched Capital Structure")
+            findCapStructure()
+        except Exception as e:
+            driver.refresh()
+            logFile.write("\nTrying again to find Capital Structure")
+            print("Trying again to find Capital Structure")
+            findCapStructure()
+            logFile.write("\nCant find Capital Structure or " + str(e))
+            print("Cant find Capital Structure or " + str(e))
+        range_num = 61
+        step = 1
+        print(getRange(SpreadsheetId, "A61:C61"))
+        for balancesheet_value in Capital_Structure_Data:
 
-        # try:
-        #     def findCapStructure():
-        #         Cs = driver.find_element_by_xpath(
-        #             "//a[@title='Capital Structure' and @class='CapitalStructure']")
-        #         Csurl = Cs.get_attribute('href')
-        #         PagesLink.append(Csurl)
-        #         logFile.write("\nsuccess : fetched Capital Structure")
-        #         print("success : fetched Capital Structure")
-        #     findCapStructure()
-        # except Exception as e:
-        #     driver.refresh()
-        #     logFile.write("\nTrying again to find Capital Structure")
-        #     print("Trying again to find Capital Structure")
-        #     findCapStructure()
-        #     logFile.write("\nCant find Capital Structure or " + str(e))
-        #     print("Cant find Capital Structure or " + str(e))
-
+            try:
+                balance_sheet_Range = 'C' + str(range_num)+':A'+str(range_num)
+                print("info : updating this value: " +
+                      str([balancesheet_value]))
+                updateRange(SpreadsheetId, [balancesheet_value],
+                            balance_sheet_Range)
+                print("info: "+balance_sheet_Range+" data is updated")
+                logFile.write("\ninfo: "+balance_sheet_Range +
+                              " data is updated")
+                range_num += step
+                # updateRange(SpreadsheetId, [balancesheet_values[0]], 'K18:B18')
+            except Exception as e:
+                print("info: "+balance_sheet_Range+" data is not updated")
+                logFile.write("\ninfo: "+balance_sheet_Range +
+                              " data is not updated")
+                pass
         # def populateSingleValues(PairLinks, index1):
         #     if(len(PairLinks) == 1):
         #         values[index1][0] = PairLinks[0]

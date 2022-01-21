@@ -87,6 +87,8 @@ def UpdateSingleLink(Id, values, Links_Range):
     except Exception as e:
         print("error : something went wrong or " + str(e))
         logFile.write("\nerror : something went wrong or " + str(e))
+
+
 def updateRange(Id, values, Links_Range):
     # Links_Range = "B8"
     request = sheet.values().update(spreadsheetId=Id, range=Links_Range,
@@ -97,10 +99,12 @@ def updateRange(Id, values, Links_Range):
         print("error : something went wrong or " + str(e))
         logFile.write("\nerror : something went wrong or " + str(e))
 
-def getRange(Id,Links_Range):
+
+def getRange(Id, Links_Range):
     # Links_Range = "B8:B18"
     values = GetExcelValues(Links_Range, Id)
     return values
+
 
 def GetLinks(Id):
     Links_Range = "B8:B18"

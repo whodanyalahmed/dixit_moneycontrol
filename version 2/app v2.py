@@ -1032,7 +1032,8 @@ for index in range(no_of_companies):
                         logFile.write("\n"+str(e))
             except TimeoutException as e:
                 print("info : website taking too long to load...stopped")
-                logFile.write("\ninfo : website taking too long to load...stopped")
+                logFile.write(
+                    "\ninfo : website taking too long to load...stopped")
                 pass
             except Exception as error:
                 print(str(error) + " cant find: " + nse)
@@ -1116,7 +1117,8 @@ for index in range(no_of_companies):
                 print("error : cant update ")
                 print(e)
 
-            driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
+            driver.execute_script(
+                "window.scrollTo(0,document.body.scrollHeight);")
             driver.implicitly_wait(15)
             balancesheet_values = []
             try:
@@ -1133,7 +1135,8 @@ for index in range(no_of_companies):
 
             except TimeoutException as e:
                 print("info : website taking too long to load...stopped")
-                logFile.write("\ninfo : website taking too long to load...stopped")
+                logFile.write(
+                    "\ninfo : website taking too long to load...stopped")
                 pass
             except Exception as e:
                 driver.refresh()
@@ -1147,7 +1150,7 @@ for index in range(no_of_companies):
             # update total shareholders data
 
             def update_values_with_range(balancesheet_values, range_num, step):
-            # range_num = 18
+                # range_num = 18
                 for balancesheet_value in balancesheet_values:
 
                     try:
@@ -1158,13 +1161,14 @@ for index in range(no_of_companies):
                                     balance_sheet_Range)
                         print("info: "+balance_sheet_Range+" data is updated")
                         logFile.write("\ninfo: "+balance_sheet_Range +
-                                    " data is updated")
+                                      " data is updated")
                         range_num += step
                         # updateRange(SpreadsheetId, [balancesheet_values[0]], 'K18:B18')
                     except Exception as e:
-                        print("info: "+balance_sheet_Range+" data is not updated")
+                        print("info: "+balance_sheet_Range +
+                              " data is not updated")
                         logFile.write("\ninfo: "+balance_sheet_Range +
-                                    " data is not updated")
+                                      " data is not updated")
                         pass
             update_values_with_range(balancesheet_values, 18, 2)
             # try getting shareholder information
@@ -1206,7 +1210,8 @@ for index in range(no_of_companies):
                 findProfitLoss()
             except TimeoutException as e:
                 print("info : website taking too long to load...stopped")
-                logFile.write("\ninfo : website taking too long to load...stopped")
+                logFile.write(
+                    "\ninfo : website taking too long to load...stopped")
                 pass
             except Exception as e:
                 driver.refresh()
@@ -1233,7 +1238,8 @@ for index in range(no_of_companies):
                 findQuarReport()
             except TimeoutException as e:
                 print("info : website taking too long to load...stopped")
-                logFile.write("\ninfo : website taking too long to load...stopped")
+                logFile.write(
+                    "\ninfo : website taking too long to load...stopped")
                 pass
             except Exception as e:
                 driver.refresh()
@@ -1259,7 +1265,8 @@ for index in range(no_of_companies):
                 findCashFlow()
             except TimeoutException as e:
                 print("info : website taking too long to load...stopped")
-                logFile.write("\ninfo : website taking too long to load...stopped")
+                logFile.write(
+                    "\ninfo : website taking too long to load...stopped")
                 pass
             except Exception as e:
                 driver.refresh()
@@ -1292,7 +1299,8 @@ for index in range(no_of_companies):
 
             except TimeoutException as e:
                 print("info : website taking too long to load...stopped")
-                logFile.write("\ninfo : website taking too long to load...stopped")
+                logFile.write(
+                    "\ninfo : website taking too long to load...stopped")
                 pass
             except Exception as e:
                 driver.refresh()
@@ -1308,20 +1316,21 @@ for index in range(no_of_companies):
             for balancesheet_value in Capital_Structure_Data:
 
                 try:
-                    balance_sheet_Range = 'C' + str(range_num)+':A'+str(range_num)
+                    balance_sheet_Range = 'C' + \
+                        str(range_num)+':A'+str(range_num)
                     print("info : updating this value: " +
-                        str([balancesheet_value]))
+                          str([balancesheet_value]))
                     updateRange(SpreadsheetId, [balancesheet_value],
                                 balance_sheet_Range)
                     print("info: "+balance_sheet_Range+" data is updated")
                     logFile.write("\ninfo: "+balance_sheet_Range +
-                                " data is updated")
+                                  " data is updated")
                     range_num += step
                     # updateRange(SpreadsheetId, [balancesheet_values[0]], 'K18:B18')
                 except Exception as e:
                     print("info: "+balance_sheet_Range+" data is not updated")
                     logFile.write("\ninfo: "+balance_sheet_Range +
-                                " data is not updated")
+                                  " data is not updated")
                     pass
             # def populateSingleValues(PairLinks, index1):
             #     if(len(PairLinks) == 1):

@@ -1137,7 +1137,10 @@ try:
             findBalancesheet()
             logFile.write("\nerror : cant find balance sheet ")
             print("error : cant find balance sheet ")
-
+        except TimeoutException as e:
+            print("info : website taking too long to load...stopped")
+            logFile.write("\ninfo : website taking too long to load...stopped")
+            pass
         print(balancesheet_values)
         # update total shareholders data
 
@@ -1206,6 +1209,10 @@ try:
             findProfitLoss()
             logFile.write("\nCant find profit loss or " + str(e))
             print("Cant find profit loss or " + str(e))
+        except TimeoutException as e:
+            print("info : website taking too long to load...stopped")
+            logFile.write("\ninfo : website taking too long to load...stopped")
+            pass
         print(Profitloss_values)
         update_values_with_range(Profitloss_values, 29, 2)
         # # Querterly report
@@ -1228,6 +1235,10 @@ try:
             findQuarReport()
             logFile.write("\nCant find Qurarterly report or " + str(e))
             print("Cant find Qurarterly report or " + str(e))
+        except TimeoutException as e:
+            print("info : website taking too long to load...stopped")
+            logFile.write("\ninfo : website taking too long to load...stopped")
+            pass
         update_values_with_range(Quarterly_values, 44, 2)
         # cash flow
         driver.implicitly_wait(10)
@@ -1249,6 +1260,10 @@ try:
             findCashFlow()
             logFile.write("\nCant find Cash flow or " + str(e))
             print("Cant find Cash flow or " + str(e))
+        except TimeoutException as e:
+            print("info : website taking too long to load...stopped")
+            logFile.write("\ninfo : website taking too long to load...stopped")
+            pass
         update_values_with_range(CashFlow_Values, 54, 2)
         # try:
         #     CashFlowLinks = Find_links("cash", PagesLink)
@@ -1276,6 +1291,10 @@ try:
             findCapStructure()
             logFile.write("\nCant find Capital Structure or " + str(e))
             print("Cant find Capital Structure or " + str(e))
+        except TimeoutException as e:
+            print("info : website taking too long to load...stopped")
+            logFile.write("\ninfo : website taking too long to load...stopped")
+            pass
         range_num = 61
         step = 1
         print(getRange(SpreadsheetId, "A61:C61"))

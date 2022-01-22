@@ -51,6 +51,7 @@ bnse = []
 # https://www.screener.in/screens/86/quarterly-growers/
 # https://www.screener.in/screens/144352/below-one-rupee-stocks
 # https://www.screener.in/screens/3/highest-dividend-yield-shares/
+# https://www.screener.in/screens/2229/intrinsicvalue
 c = 0
 z= 0
 flag = 0

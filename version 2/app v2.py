@@ -374,7 +374,7 @@ def get_ProfitLoss_data(li, url):
                 print(e)
 
             standalone_years.append(
-                get_table_row_data("Profit & Loss account of Pazel International "))
+                get_table_row_data("Profit & Loss account of"))
             standalone_rev_from_op.append(
                 get_table_row_data("Revenue From Operations [Net]"))
             standalone_finance_cost.append(
@@ -412,7 +412,7 @@ def get_ProfitLoss_data(li, url):
         Consoledated_url = driver.current_url
 
         consoledated_years.append(
-            get_table_row_data("Profit & Loss account of Pazel International "))
+            get_table_row_data("Profit & Loss account of"))
         consoledated_rev_from_op.append(
             get_table_row_data("Revenue From Operations [Net]"))
         consoledated_finance_cost.append(
@@ -449,7 +449,7 @@ def get_ProfitLoss_data(li, url):
                 print(e)
 
             consoledated_years.append(
-                get_table_row_data("Profit & Loss account of Pazel International "))
+                get_table_row_data("Profit & Loss account of"))
             consoledated_rev_from_op.append(
                 get_table_row_data("Revenue From Operations [Net]"))
             consoledated_finance_cost.append(

@@ -166,6 +166,10 @@ def get_BalanceSheet_data(li, url):
 
     try:
         driver.find_element_by_id("#consolidated").click()
+    except TimeoutException as e:
+        print("error : cant click consolidated")
+        logFile.write("\nerror : cant click consolidated")
+        print(e)
     except Exception as e:
         logFile.write("\nerror : cant find consoledated link "+str(e))
         print("error : cant find consoledated link "+str(e))
@@ -334,7 +338,7 @@ def get_ProfitLoss_data(li, url):
         standAloneYear_url = driver.current_url
         standAloneL.append(standAloneYear_url)
         standalone_years.append(
-            get_table_row_data("Profit & Loss account of Pazel International "))
+            get_table_row_data("Profit & Loss account of"))
         standalone_rev_from_op.append(
             get_table_row_data("Revenue From Operations [Net]"))
         standalone_finance_cost.append(
@@ -395,6 +399,10 @@ def get_ProfitLoss_data(li, url):
 
     try:
         driver.find_element_by_id("#consolidated").click()
+    except TimeoutException as e:
+        print("error : cant find consolidated")
+        logFile.write("\nerror : cant find consolidated")
+        print(e)
     except Exception as e:
         logFile.write("\nerror : cant find consoledated link "+str(e))
         print("error : cant find consoledated link "+str(e))
@@ -627,6 +635,10 @@ def get_Quarterly_data(li, url):
 
     try:
         driver.find_element_by_id("#consolidated").click()
+    except TimeoutException as e:
+        print("error : cant find consolidated")
+        logFile.write("\nerror : cant find consolidated")
+        print(e)
     except Exception as e:
         logFile.write("\nerror : cant find consoledated link "+str(e))
         print("error : cant find consoledated link "+str(e))
@@ -810,6 +822,10 @@ def get_CashFlow_data(li, url):
 
     try:
         driver.find_element_by_id("#consolidated").click()
+    except TimeoutException as e:
+        print("error : cant find consolidated")
+        logFile.write("\nerror : cant find consolidated")
+        print(e)
     except Exception as e:
         logFile.write("\nerror : cant find consoledated link "+str(e))
         print("error : cant find consoledated link "+str(e))
@@ -1316,7 +1332,6 @@ for index in range(no_of_companies):
 
             range_num = 61
             step = 1
-            print(getRange(SpreadsheetId, "A61:C61"))
             for balancesheet_value in Capital_Structure_Data:
 
                 try:

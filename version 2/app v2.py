@@ -83,7 +83,7 @@ def get_table_row_data(name):
         driver.execute_script("window.scrollTo(0, 700)")
         tds = driver.find_elements_by_xpath(
             "//td[contains(text(),'"+name+"')]/following-sibling::td")
-        print("info: "+name+" is available")
+        print("info : "+name+" is available")
         for td in tds:
 
             print(td.text)
@@ -135,7 +135,7 @@ def get_BalanceSheet_data(li, url):
             standAloneL.append(standAloneYear_url2)
             try:
                 driver.get(standAloneYear_url2)
-                print("info: going to next standalone link")
+                print("info : going to next standalone link")
             except TimeoutException as e:
                 print("error : cant load next standalone link")
                 logFile.write("\nerror : cant load next standalone link")
@@ -197,7 +197,7 @@ def get_BalanceSheet_data(li, url):
             ConsoledatedL.append(consoledated_url2)
             try:
                 driver.get(consoledated_url2)
-                print("info: going to next consoledated link")
+                print("info : going to next consoledated link")
             except TimeoutException as e:
                 print("error : cant load next consoledated link")
                 logFile.write("\nerror : cant load next consoledated link")
@@ -359,7 +359,7 @@ def get_ProfitLoss_data(li, url):
             standAloneL.append(standAloneYear_url2)
             try:
                 driver.get(standAloneYear_url2)
-                print("info: going to next standalone link")
+                print("info : going to next standalone link")
             except TimeoutException as e:
                 print("error : cant load next standalone link")
                 logFile.write("\nerror : cant load next standalone link")
@@ -430,7 +430,7 @@ def get_ProfitLoss_data(li, url):
             ConsoledatedL.append(consoledated_url2)
             try:
                 driver.get(consoledated_url2)
-                print("info: going to next consoledated link")
+                print("info : going to next consoledated link")
             except TimeoutException as e:
                 print("error : cant load next consoledated link")
                 logFile.write("\nerror : cant load next consoledated link")
@@ -597,7 +597,7 @@ def get_Quarterly_data(li, url):
             standAloneL.append(standAloneYear_url2)
             try:
                 driver.get(standAloneYear_url2)
-                print("info: going to next standalone link")
+                print("info : going to next standalone link")
             except TimeoutException as e:
                 print("error : cant load next standalone link")
                 logFile.write("\nerror : cant load next standalone link")
@@ -656,7 +656,7 @@ def get_Quarterly_data(li, url):
             ConsoledatedL.append(consoledated_url2)
             try:
                 driver.get(consoledated_url2)
-                print("info: going to next consoledated link")
+                print("info : going to next consoledated link")
             except TimeoutException as e:
                 print("error : cant load next consoledated link")
                 logFile.write("\nerror : cant load next consoledated link")
@@ -784,7 +784,7 @@ def get_CashFlow_data(li, url):
             standAloneL.append(standAloneYear_url2)
             try:
                 driver.get(standAloneYear_url2)
-                print("info: going to next standalone link")
+                print("info : going to next standalone link")
             except TimeoutException as e:
                 print("error : cant load next standalone link")
                 logFile.write("\nerror : cant load next standalone link")
@@ -835,7 +835,7 @@ def get_CashFlow_data(li, url):
             ConsoledatedL.append(consoledated_url2)
             try:
                 driver.get(consoledated_url2)
-                print("info: going to next consoledated link")
+                print("info : going to next consoledated link")
             except TimeoutException as e:
                 print("error : cant load next consoledated link")
                 logFile.write("\nerror : cant load next consoledated link")
@@ -935,12 +935,12 @@ def get_capital_structure_data(table_data):
                 print("error: table row not found")
                 print(e)
         print(table_data)
-        print("info: with these "+str(len(table_data))+" number of data")
+        print("info : with these "+str(len(table_data))+" number of data")
         if(len(table_data) > 10):
             # get first 10 elements and save in same list
-            print("info: Data is more then 10 years trimming it to 10 years")
+            print("info : Data is more then 10 years trimming it to 10 years")
             table_data = table_data[0:10]
-        print("info: with these "+str(len(table_data))+" number of data")
+        print("info : with these "+str(len(table_data))+" number of data")
         return table_data
     except Exception as e:
         print("error: table not loaded")
@@ -1159,15 +1159,15 @@ for index in range(no_of_companies):
                             str(range_num)+':B'+str(range_num)
                         updateRange(SpreadsheetId, shareholders_Data,
                                     balance_sheet_Range)
-                        print("info: "+balance_sheet_Range+" data is updated")
-                        logFile.write("\ninfo: "+balance_sheet_Range +
+                        print("info : "+balance_sheet_Range+" data is updated")
+                        logFile.write("\ninfo : "+balance_sheet_Range +
                                       " data is updated")
                         range_num += step
                         # updateRange(SpreadsheetId, [balancesheet_values[0]], 'K18:B18')
                     except Exception as e:
-                        print("info: "+balance_sheet_Range +
+                        print("info : "+balance_sheet_Range +
                               " data is not updated")
-                        logFile.write("\ninfo: "+balance_sheet_Range +
+                        logFile.write("\ninfo : "+balance_sheet_Range +
                                       " data is not updated")
                         pass
             update_values_with_range(balancesheet_values, 18, 2)
@@ -1322,18 +1322,17 @@ for index in range(no_of_companies):
                 try:
                     balance_sheet_Range = 'C' + \
                         str(range_num)+':A'+str(range_num)
-                    print("info : updating this value: " +
-                          str([balancesheet_value]))
+
                     updateRange(SpreadsheetId, [balancesheet_value],
                                 balance_sheet_Range)
-                    print("info: "+balance_sheet_Range+" data is updated")
-                    logFile.write("\ninfo: "+balance_sheet_Range +
+                    print("info : "+balance_sheet_Range+" data is updated")
+                    logFile.write("\ninfo : "+balance_sheet_Range +
                                   " data is updated")
                     range_num += step
                     # updateRange(SpreadsheetId, [balancesheet_values[0]], 'K18:B18')
                 except Exception as e:
-                    print("info: "+balance_sheet_Range+" data is not updated")
-                    logFile.write("\ninfo: "+balance_sheet_Range +
+                    print("info : "+balance_sheet_Range+" data is not updated")
+                    logFile.write("\ninfo : "+balance_sheet_Range +
                                   " data is not updated")
                     pass
             # def populateSingleValues(PairLinks, index1):

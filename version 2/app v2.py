@@ -940,8 +940,8 @@ def get_capital_structure_data(table_data):
             # get first 10 elements and save in same list
             print("info: Data is more then 10 years trimming it to 10 years")
             table_data = table_data[0:10]
-        print(table_data)
         print("info: with these "+str(len(table_data))+" number of data")
+        return table_data
     except Exception as e:
         print("error: table not loaded")
         print(e)
@@ -1292,7 +1292,10 @@ for index in range(no_of_companies):
                         "//a[@title='Capital Structure' and @class='CapitalStructure']")
                     Csurl = Cs.get_attribute('href')
                     driver.get(Csurl)
-                    get_capital_structure_data(Capital_Structure_Data)
+                    temp = []
+                    global Capital_Structure_Data
+                    Capital_Structure_Data = get_capital_structure_data(temp)
+
                     logFile.write("\nsuccess : fetched Capital Structure")
                     print("success : fetched Capital Structure")
                 findCapStructure()
@@ -1304,8 +1307,9 @@ for index in range(no_of_companies):
                 pass
             except Exception as e:
                 driver.refresh()
-                logFile.write("\nTrying again to find Capital Structure")
-                print("Trying again to find Capital Structure")
+                logFile.write(
+                    "\nTrying again to find Capital Structure because " + str(e))
+                print("Trying again to find Capital Structure because " + str(e))
                 findCapStructure()
                 logFile.write("\nCant find Capital Structure or " + str(e))
                 print("Cant find Capital Structure or " + str(e))

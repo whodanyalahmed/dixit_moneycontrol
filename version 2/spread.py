@@ -69,7 +69,7 @@ def updateSingleValue(name, Id, Ticker_Range):
                                     valueInputOption="USER_ENTERED", body={"values": values})
     response = request.execute()
     logFile.write("\n" + str(response))
-    print("sucess: updated cell " + Ticker_Range + " with " + name.upper())
+    print("success: updated cell " + Ticker_Range + " with " + name.upper())
 
 
 def GetLink(Id, Links_Range):

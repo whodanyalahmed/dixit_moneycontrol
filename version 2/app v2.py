@@ -86,7 +86,7 @@ def get_table_row_data(name):
         print("info : "+name+" is available")
         for td in tds:
 
-            print(td.text)
+            # print(td.text)
             if(td.text != " "):
                 li.append(td.text)
         return li
@@ -1389,11 +1389,15 @@ for index in range(no_of_companies):
             #   CF screener
             try:
                 driver.get(screener_url)
+
                 driver.find_element_by_xpath(
                     "//section[@id='cash-flow']/div[2]/table/tbody/tr[2]/td[1]/button").click()
-                # time.sleep(5)
+                time.sleep(5)
                 cf = driver.find_element_by_xpath(
-                    "//section[@id='cash-flow']/div[2]/table/tbody/tr[3]").text
+                    "//section[@id='cash-flow']/div[2]/table/tbody/tr[3]")
+
+                cf = cf.text
+                # //section[@id='cash-flow']/div[2]/table/tbody/tr[3]/td[1]
                 cf = str(cf).split(' ')
                 cf = cf[3:]
                 # print(cf)

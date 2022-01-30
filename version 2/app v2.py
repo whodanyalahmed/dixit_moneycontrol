@@ -9,7 +9,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-# from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.options import Options
 import time
 import sys
 import os
@@ -48,8 +48,26 @@ if(Replace == "y"):
     Replace_Bool = True
 else:
     Replace_Bool = False
-# driver =webdriver.Chrome(path,options=chrome_options)
-driver = webdriver.Chrome(path)
+
+
+def chrome(headless=False):
+    # support to get response status and headers
+    d = webdriver.DesiredCapabilities.CHROME
+    d['loggingPrefs'] = {'performance': 'ALL'}
+    opt = webdriver.ChromeOptions()
+    if headless:
+        opt.add_argument("--headless")
+    opt.add_experimental_option('excludeSwitches', ['enable-logging'])
+    opt.add_argument("--disable-popup-blocking")
+    browser = webdriver.Chrome(
+        executable_path=r'i://clients//chromedriver.exe', options=opt, desired_capabilities=d)
+    browser.implicitly_wait(10)
+    browser.maximize_window()
+    return browser
+
+
+driver = chrome()
+# driver = webdriver.Chrome(path)
 # check length of the list must be 10 if not then add dots
 
 
@@ -966,7 +984,7 @@ def get_capital_structure_data(table_data):
 
 
 driver.maximize_window()
-driver.set_page_load_timeout(15)
+# driver.set_page_load_timeout(15)
 # open link
 # driver.set_page_load_timeout(120)
 # driver.set_page_load_timeout(30)
@@ -990,6 +1008,7 @@ no_of_companies = len(companyName_link[0])
 logFile.write(str(no_of_companies))
 print(no_of_companies)
 for index in range(no_of_companies):
+    # print(companyName_link[3])
     try:
         # index = 0
         name = companyName_link[2][index]
@@ -1031,15 +1050,64 @@ for index in range(no_of_companies):
 
         nse = companyName_link[3][index]
 
-        driver.set_page_load_timeout(100)
+        # driver.set_page_load_timeout(100)
         try:
             print("Trying BSE of : " + name)
+            
             logFile.write("\nTrying BSE of : " + name)
             try:
                 search_inp = driver.find_element_by_id("search_str")
                 search_inp.send_keys(nse)
                 search_inp.send_keys(Keys.ENTER)
+                
+                # https://www.moneycontrol.com/stocks/cptmarket/compsearchnew.php?search_data=&cid=&mbsearch_str=&topsearch_type=1&search_str=Kanchi+Karpooram+Ltd
+                if(driver.current_url == "https://www.moneycontrol.com/stocks/cptmarket/compsearchnew.php?search_data=&cid=&mbsearch_str=&topsearch_type=1&search_str="+nse):
+                    print("info : BSE not found found")
+                    logFile.write("\ninfo : BSE not found found")
+                    try:
+                        print("info : trying full company name")
+
+                        search_inp = driver.find_element_by_id("search_str")
+                        search_inp.send_keys(name)
+                        search_inp.send_keys(Keys.ENTER)
+                        error_url = "https://www.moneycontrol.com/stocks/cptmarket/compsearchnew.php?search_data=&cid=&mbsearch_str=&topsearch_type=1&search_str=" + \
+                            name.replace(' ', '+')
+
+                        if(driver.current_url == error_url):
+
+                            # find element that has text like name
+                            try:
+
+                                print(name[:-3])
+                                # find element with with partial lnk
+
+                                link_with_name = driver.find_element_by_partial_link_text(
+                                    ' '.join(name.split()[:2]))
+                                print(
+                                    "info : trying to get the link with same text")
+
+                                link_with_name.click()
+
+                                if(driver.current_url == error_url):
+                                    print("info : BSE not found found")
+                                    logFile.write(
+                                        "\ninfo : BSE not found found")
+                                    continue
+                                else:
+                                    print("success : BSE found")
+                                    logFile.write("\nsuccess : BSE found")
+                            except Exception as e:
+                                print("error : link with same text not found")
+                                logFile.write("\n"+str(e))
+                                print(e)
+
+                    except Exception as e:
+                        print("info : cant find with full name")
+                        logFile.write("\ninfo : cant find with full name")
                 proceed_btn = driver.find_element_by_id("proceed-button")
+                # https://www.moneycontrol.com/stocks/cptmarket/compsearchnew.php?search_data=&cid=&mbsearch_str=&topsearch_type=1&search_str=540025
+                # https://www.moneycontrol.com/stocks/cptmarket/compsearchnew.php?search_data=&cid=&mbsearch_str=&topsearch_type=1&search_str=kanchi
+                # https://www.moneycontrol.com/stocks/cptmarket/compsearchnew.php?search_data=&cid=&mbsearch_str=&topsearch_type=1&search_str=538896
                 if(proceed_btn):
                     try:
                         proceed_btn.click()
@@ -1048,6 +1116,7 @@ for index in range(no_of_companies):
                     except Exception as e:
                         print(e)
                         logFile.write("\n"+str(e))
+
             except TimeoutException as e:
                 print("info : website taking too long to load...stopped")
                 logFile.write(

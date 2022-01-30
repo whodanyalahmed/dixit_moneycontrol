@@ -52,6 +52,7 @@ bnse = []
 # https://www.screener.in/screens/144352/below-one-rupee-stocks
 # https://www.screener.in/screens/3/highest-dividend-yield-shares/
 # https://www.screener.in/screens/2229/intrinsicvalue
+# https://www.screener.in/screens/603283/temp/
 c = 0
 z= 0
 flag = 0

@@ -60,7 +60,7 @@ def chrome(headless=False):
     opt.add_experimental_option('excludeSwitches', ['enable-logging'])
     opt.add_argument("--disable-popup-blocking")
     browser = webdriver.Chrome(
-        executable_path=r'i://clients//chromedriver.exe', options=opt, desired_capabilities=d)
+        executable_path=r'driver/chromedriver.exe', desired_capabilities=d)
     browser.implicitly_wait(10)
     browser.maximize_window()
     return browser

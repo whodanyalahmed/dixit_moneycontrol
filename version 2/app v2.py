@@ -1053,36 +1053,40 @@ for index in range(no_of_companies):
         # driver.set_page_load_timeout(100)
         try:
             print("Trying BSE of : " + name)
-            
+
             logFile.write("\nTrying BSE of : " + name)
             try:
                 search_inp = driver.find_element_by_id("search_str")
                 search_inp.send_keys(nse)
                 search_inp.send_keys(Keys.ENTER)
-                
+
                 # https://www.moneycontrol.com/stocks/cptmarket/compsearchnew.php?search_data=&cid=&mbsearch_str=&topsearch_type=1&search_str=Kanchi+Karpooram+Ltd
                 if(driver.current_url == "https://www.moneycontrol.com/stocks/cptmarket/compsearchnew.php?search_data=&cid=&mbsearch_str=&topsearch_type=1&search_str="+nse):
                     print("info : BSE not found found")
                     logFile.write("\ninfo : BSE not found found")
                     try:
                         print("info : trying full company name")
-
+                        if (len(name.split()) >= 3):
+                            alt_name = " ".join(name.split()[0:2])
+                        else:
+                            alt_name = " ".join(name.split()[0:1])
                         search_inp = driver.find_element_by_id("search_str")
-                        search_inp.send_keys(name)
+                        search_inp.send_keys(alt_name)
                         search_inp.send_keys(Keys.ENTER)
                         error_url = "https://www.moneycontrol.com/stocks/cptmarket/compsearchnew.php?search_data=&cid=&mbsearch_str=&topsearch_type=1&search_str=" + \
-                            name.replace(' ', '+')
+                            alt_name.replace(' ', '+')
 
                         if(driver.current_url == error_url):
 
                             # find element that has text like name
                             try:
 
-                                print(name[:-3])
+                                # alt_name = ' '.join(alt_name.split()[:1])
+                                print(alt_name)
                                 # find element with with partial lnk
 
                                 link_with_name = driver.find_element_by_partial_link_text(
-                                    ' '.join(name.split()[:2]))
+                                    alt_name)
                                 print(
                                     "info : trying to get the link with same text")
 
